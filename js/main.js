@@ -1,5 +1,5 @@
 /**
- * BrandIA Engine v6.8 - Critical Stabilization & Flow Fix
+ * BrandIA Engine v6.9 - Final Stability Fix + Version Sync
  */
 
 class BrandApp {
@@ -42,7 +42,7 @@ class BrandApp {
         this.addConnectionStatusUI();
         this.selectedModel = "gemini-3-flash-preview";
         this.updateStatus(`IA Activa: Gemini 3 Flash`, "success");
-        this.updateVersionDisplay();
+        this.updateVersionBadge();
 
         if (this.btnStart) this.btnStart.onclick = () => this.handleOnboarding();
 
@@ -106,7 +106,7 @@ class BrandApp {
                 `;
                 footer.appendChild(badge);
             }
-            badge.innerText = "v6.8 [Stable]";
+            badge.innerText = "v6.9 [Standard]";
             // Version incremented
         }
     }
@@ -382,38 +382,39 @@ class BrandApp {
 
     updateUIWithAIConfig(config) {
         if (config.palette) {
-            const colorsCont = document.getElementById('suggested-colors');
+            const colorsCont = document.getElementById('color-palette');
             if (colorsCont) {
                 colorsCont.innerHTML = '';
                 config.palette.forEach(c => {
                     const swatch = document.createElement('div');
-                    swatch.className = 'color-swatch';
+                    swatch.className = 'color-swatch-elite';
                     swatch.innerHTML = `
                         <div class="color-circle" style="background-color: ${c}" title="${c}"></div>
-                        <div class="color-code">${c.toUpperCase()}</div>
+                        <div class="color-code" style="font-size:0.7rem; margin-top:5px; font-weight:bold">${c.toUpperCase()}</div>
                     `;
                     colorsCont.appendChild(swatch);
                 });
             }
         }
         if (config.font) {
-            const fontEl = document.getElementById('suggested-font-name');
-            const specimenEl = document.getElementById('font-specimen');
+            const fontEl = document.getElementById('font-heading-name');
+            const specimenEl = document.getElementById('font-preview-text');
             if (fontEl) {
                 fontEl.innerText = config.font;
                 fontEl.style.fontFamily = `'${config.font}', sans-serif`;
             }
             if (specimenEl) {
                 specimenEl.style.fontFamily = `'${config.font}', sans-serif`;
+                specimenEl.innerText = "Modern elegance meets innovative branding.";
             }
         }
         if (config.icons) {
-            const iconsCont = document.getElementById('suggested-icons');
+            const iconsCont = document.getElementById('icon-grid');
             if (iconsCont) {
                 iconsCont.innerHTML = '';
                 config.icons.forEach(name => {
                     const iconBox = document.createElement('div');
-                    iconBox.className = 'board-icon';
+                    iconBox.className = 'icon-swatch-elite';
                     iconBox.innerHTML = `<i data-lucide="${name}"></i>`;
                     iconsCont.appendChild(iconBox);
                 });

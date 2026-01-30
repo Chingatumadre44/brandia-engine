@@ -421,12 +421,16 @@ body {
     gap: 10px;
 }
 
-.chat-input-area input {
+.chat-input-area input,
+.chat-input-area textarea {
     flex-grow: 1;
     padding: 12px;
     border-radius: 10px;
     border: 1px solid #edf2f7;
     outline: none;
+    resize: none;
+    font-size: 0.9rem;
+    color: #1e293b;
 }
 
 .chat-input-area button {
@@ -990,13 +994,56 @@ body {
     font-style: italic;
 }
 
-/* Colors */
-.colors-grid {
+.color-palette,
+.icon-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 15px;
     justify-content: center;
-    padding: 1rem 0;
+    padding: 1.5rem 0;
+}
+
+.color-swatch-elite,
+.icon-swatch-elite {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeInScale 0.5s ease-out;
+}
+
+.color-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: 2px solid white;
+}
+
+.icon-swatch-elite {
+    width: 50px;
+    height: 50px;
+    background: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.font-preview {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.font-preview h4 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.font-preview p {
+    font-size: 1.1rem;
+    color: var(--text-muted);
 }
 
 .color-swatch {
