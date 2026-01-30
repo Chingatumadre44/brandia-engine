@@ -1,10 +1,10 @@
 /**
- * BrandIA Engine v6.4 - Total Hub Sync + Real Asset Gen + 18s Feedback
+ * BrandIA Engine v6.5 - Dashboard Optimization + Logo Fix + Sidebar UI
  */
 
 class BrandApp {
     constructor() {
-        console.log("Iniciando BrandIA Engine v6.4 (Total Sync UI)...");
+        console.log("Iniciando BrandIA Engine v6.5 (Layout Optimize)...");
         this.appMain = document.getElementById('app-main');
         this.onboarding = document.getElementById('onboarding');
         this.btnStart = document.getElementById('btn-start');
@@ -12,7 +12,9 @@ class BrandApp {
         this.dropZone = document.getElementById('drop-zone');
         this.fileInput = document.getElementById('file-input');
         this.noLogoBtn = document.getElementById('no-logo-btn');
-        this.previewImg = document.getElementById('preview-img');
+        this.previewImg = document.getElementById('preview-img'); // Mini preview in upload area
+        this.logoActualDisplay = document.getElementById('logo-actual-display'); // Board display
+        this.logoEmptyState = document.getElementById('logo-empty-state');
         this.btnExport = document.getElementById('btn-export');
         this.loader = document.getElementById('loader');
 
@@ -84,13 +86,14 @@ class BrandApp {
     }
 
 
-    updateVersionDisplay() {
-        const footer = document.querySelector('.sidebar-footer');
+    updateVersionBadge() {
+        const footer = document.getElementById('sidebar-footer'); // Changed to getElementById
         if (footer) {
             let badge = document.getElementById('version-badge');
             if (!badge) {
-                badge = document.createElement('div');
+                badge = document.createElement('span'); // Changed from 'div' to 'span'
                 badge.id = 'version-badge';
+                badge.className = 'v-badge'; // New class name
                 badge.style.cssText = `
                     font-size: 10px;
                     background: var(--primary);
@@ -103,7 +106,7 @@ class BrandApp {
                 `;
                 footer.appendChild(badge);
             }
-            badge.innerText = "v6.4 [Hub Sync]";
+            badge.innerText = "v6.6 [Master Hub]"; // Version incremented
         }
     }
 
@@ -500,6 +503,12 @@ class BrandApp {
     }
 
     handleNoLogo() {
+        // Clear any existing logo display
+        if (this.previewImg) this.previewImg.src = '';
+        if (this.logoActualDisplay) this.logoActualDisplay.src = '';
+        if (this.logoActualDisplay) this.logoActualDisplay.classList.add('hidden');
+        if (this.logoEmptyState) this.logoEmptyState.classList.remove('hidden');
+
         this.aiTyping(async () => {
             this.conversationState = 'creating_from_scratch';
             this.addMessage("¡Excelente! Vamos a diseñar algo desde cero. Generando primera propuesta visual...", 'ai');
@@ -528,10 +537,22 @@ class BrandApp {
         this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
     }
 
-    handleFiles(file) {
+    handleFileUpload(file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-            if (this.previewImg) this.previewImg.src = e.target.result;
+            const dataUrl = e.target.result;
+            // Update mini preview
+            if (this.previewImg) {
+                this.previewImg.src = dataUrl;
+                this.previewImg.parentElement.classList.remove('hidden');
+            }
+            // Update Board display
+            if (this.logoActualDisplay) {
+                this.logoActualDisplay.src = dataUrl;
+                this.logoActualDisplay.classList.remove('hidden');
+                if (this.logoEmptyState) this.logoEmptyState.classList.add('hidden');
+            }
+            this.addMessage("¡Logo recibido! Lo he colocado en tu Brand Board como referencia.", 'user');
             this.runSimulation(`Analizando semántica del logo: ${file.name}...`);
         };
         reader.readAsDataURL(file);

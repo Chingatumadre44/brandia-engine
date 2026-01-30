@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BrandIA Engine v6.3 [Premium Dashboard]</title>
-    <!-- Last Build: 2026-01-30 15:43 -->
+    <title>BrandIA Engine v6.5 [Master Hub]</title>
+    <!-- Last Build: 2026-01-30 16:25 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -26,21 +26,13 @@
                 <a href="#dashboard" class="nav-item active"><i data-lucide="layout-dashboard"></i> Dashboard</a>
                 <a href="#builder" class="nav-item"><i data-lucide="palette"></i> Generador</a>
                 <a href="#assets" class="nav-item"><i data-lucide="folder-open"></i> Activos</a>
-                <a href="#docs" class="nav-item"><i data-lucide="file-text"></i> Guía</a>
+                <a href="#" class="nav-item">
+                    <i data-lucide="help-circle"></i>
+                    <span>Soporte</span>
+                </a>
             </nav>
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    <div class="avatar" id="user-avatar-initials">?</div>
-                    <div class="user-info">
-                        <span class="user-name" id="user-display-name">Usuario</span>
-                        <span class="user-role">Administrador</span>
-                    </div>
-                </div>
-                <div id="version-badge-container" style="margin-top: 15px; text-align: center;">
-                    <span id="version-badge"
-                        style="font-size: 10px; background: rgba(52, 152, 219, 0.2); color: #3498db; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(52, 152, 219, 0.3); font-family: monospace;">v6.1
-                        [G3-ULTRA]</span>
-                </div>
+            <div id="sidebar-footer" class="sidebar-footer">
+                <!-- El badge de versión se inyectará aquí -->
             </div>
         </aside>
 
@@ -78,90 +70,112 @@
                                 </div>
                             </div>
                             <div class="chat-input-area">
-                                <input type="text" id="chat-input" placeholder="Escribe tu respuesta...">
-                                <button id="send-msg"><i data-lucide="send"></i></button>
+                                <textarea id="user-input" placeholder="Escribe tu visión de marca..."
+                                    rows="1"></textarea>
+                                <button id="btn-generate">
+                                    <i data-lucide="sparkles"></i>
+                                </button>
                             </div>
                         </div>
 
-                        <!-- Brand Board -->
-                        <div class="brand-board" id="brand-board">
-                            <div class="board-header">
-                                <div class="header-left">
-                                    <h2><i data-lucide="layout"></i> Brand Board</h2>
-                                    <p>Identidad visual en tiempo real</p>
-                                </div>
-                                <button class="btn-secondary" id="btn-export">
-                                    <i data-lucide="download"></i> Exportar
-                                </button>
+                        <!-- Subida de Logo (Ahora justo debajo del chat para evitar scroll) -->
+                        <div class="board-card upload-section-v2">
+                            <div class="upload-header">
+                                <i data-lucide="upload-cloud"></i>
+                                <span>Sube tu logo actual</span>
                             </div>
-
-                            <div class="board-grid">
-                                <!-- Logo Section -->
-                                <div class="board-card logo-section">
-                                    <div class="card-label">Logotipo</div>
-                                    <div class="logo-display">
-                                        <div class="logo-box">
-                                            <span>Actual</span>
-                                            <img src="assets/logo_real.png" alt="Logo Actual" id="preview-img">
-                                        </div>
-                                        <div class="logo-box generated" id="logo-gen-container">
-                                            <span>Propuesta IA</span>
-                                            <div class="gen-status-overlay hidden" id="gen-status-overlay">
-                                                <div class="mini-spinner"></div>
-                                                <span>Materializando...</span>
-                                            </div>
-                                            <img src="" alt="Propuesta" id="generated-logo" class="hidden">
-                                            <div class="placeholder" id="logo-placeholder">Esperando prompt...</div>
-                                        </div>
-                                    </div>
+                            <div class="upload-controls">
+                                <div id="drop-zone" class="drop-zone-mini">
+                                    <span id="upload-hint">Arrastra aquí</span>
+                                    <input type="file" id="file-input" hidden accept="image/*">
+                                    <button id="btn-upload" class="btn-secondary-mini">Buscar</button>
                                 </div>
-
-                                <!-- Colors Section -->
-                                <div class="board-card colors-section">
-                                    <div class="card-label">Colores</div>
-                                    <div class="colors-grid" id="suggested-colors">
-                                        <!-- Dynamic colors -->
-                                    </div>
-                                </div>
-
-                                <!-- Typography Section -->
-                                <div class="board-card typo-section">
-                                    <div class="card-label">Tipografía</div>
-                                    <div class="typo-preview" id="typo-preview">
-                                        <h1 id="font-specimen">Aa</h1>
-                                        <p id="suggested-font-name">Outfit Bold</p>
-                                    </div>
-                                </div>
-
-                                <!-- Icons Section -->
-                                <div class="board-card icons-section">
-                                    <div class="card-label">Iconos</div>
-                                    <div class="icons-grid" id="suggested-icons">
-                                        <!-- Dynamic icons -->
-                                    </div>
+                                <button id="no-logo-btn" class="btn-ghost-mini">No tengo logo</button>
+                                <div id="preview-cont" class="preview-mini hidden">
+                                    <img id="preview-img" src="" alt="Preview">
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="secondary-actions-row">
-                        <!-- Dropzone -->
-                        <div class="card drop-card">
-                            <div class="drop-zone" id="drop-zone">
-                                <div class="drop-zone-content">
-                                    <i data-lucide="upload-cloud" class="drop-icon-svg"></i>
-                                    <span>Sube tu Logotipo actual</span>
-                                </div>
-                                <input type="file" id="file-input" hidden accept="image/*">
+                    <!-- Brand Board -->
+                    <div class="brand-board" id="brand-board">
+                        <div class="board-header">
+                            <div class="header-left">
+                                <h2><i data-lucide="layout"></i> Brand Board</h2>
+                                <p>Identidad visual en tiempo real</p>
                             </div>
-                            <div class="no-logo-action">
-                                <button id="no-logo-btn" class="link-btn">La IA puede crear uno por ti</button>
+                            <button class="btn-secondary" id="btn-export">
+                                <i data-lucide="download"></i> Exportar
+                            </button>
+                        </div>
+
+                        <div class="board-grid">
+                            <!-- Logo Section -->
+                            <div class="board-card logo-section">
+                                <div class="card-label">Logotipo</div>
+                                <div class="logo-display">
+                                    <div class="logo-box current">
+                                        <span class="label">ACTUAL</span>
+                                        <div class="logo-display">
+                                            <img id="logo-actual-display" src="" alt="" class="hidden">
+                                            <div id="logo-empty-state" class="empty-logo-msg">
+                                                <i data-lucide="image"></i>
+                                                <span>Sin logo</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="logo-box generated" id="logo-gen-container">
+                                        <span>Propuesta IA</span>
+                                        <div class="gen-status-overlay hidden" id="gen-status-overlay">
+                                            <div class="mini-spinner"></div>
+                                            <span>Materializando...</span>
+                                        </div>
+                                        <img src="" alt="Propuesta" id="generated-logo" class="hidden">
+                                        <div class="placeholder" id="logo-placeholder">Esperando prompt...</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Colors Section -->
+                            <div class="board-card colors-section">
+                                <div class="card-label">Colores</div>
+                                <div class="colors-grid" id="suggested-colors">
+                                    <!-- Dynamic colors -->
+                                </div>
+                            </div>
+
+                            <!-- Typography Section -->
+                            <div class="board-card typo-section">
+                                <div class="card-label">Tipografía</div>
+                                <div class="typo-preview" id="typo-preview">
+                                    <h1 id="font-specimen">Aa</h1>
+                                    <p id="suggested-font-name">Outfit Bold</p>
+                                </div>
+                            </div>
+
+                            <!-- Icons Section -->
+                            <div class="board-card icons-section">
+                                <div class="card-label">Iconos</div>
+                                <div class="icons-grid" id="suggested-icons">
+                                    <!-- Dynamic icons -->
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
-        </main>
+
+    </div>
+    <input type="file" id="file-input" hidden accept="image/*">
+    </div>
+    <div class="no-logo-action">
+        <button id="no-logo-btn" class="link-btn">La IA puede crear uno por ti</button>
+    </div>
+    </div>
+    </div>
+    </div>
+    </section>
+    </main>
     </div>
 
     <!-- Onboarding Step -->
