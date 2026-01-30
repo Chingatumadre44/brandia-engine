@@ -1,10 +1,10 @@
 /**
- * BrandIA Engine v6.2 - Imagen 3.0 Stable + Interactive Brand Board
+ * BrandIA Engine v6.3 - Dashboard Balance + Export + High-Vis Image Gen
  */
 
 class BrandApp {
     constructor() {
-        console.log("Iniciando BrandIA Engine v6.2 (Imagen 3.0 + Brand Board)...");
+        console.log("Iniciando BrandIA Engine v6.3 (Balanced UI + Export)...");
         this.appMain = document.getElementById('app-main');
         this.onboarding = document.getElementById('onboarding');
         this.btnStart = document.getElementById('btn-start');
@@ -13,6 +13,7 @@ class BrandApp {
         this.fileInput = document.getElementById('file-input');
         this.noLogoBtn = document.getElementById('no-logo-btn');
         this.previewImg = document.getElementById('preview-img');
+        this.btnExport = document.getElementById('btn-export');
         this.loader = document.getElementById('loader');
 
         // Chat
@@ -22,6 +23,7 @@ class BrandApp {
 
         this.userData = { name: '', profession: '' };
         this.conversationState = 'init';
+        this.currentConfig = null;
 
         // API Key (Obfuscated to avoid auto-revoke)
         const k1 = "AIzaSyDW2KmzfXWc";
@@ -74,6 +76,10 @@ class BrandApp {
             this.btnGenerate.onclick = () => this.runSimulation("IA está explorando nuevas vertientes creativas...");
         }
 
+        if (this.btnExport) {
+            this.btnExport.onclick = () => this.handleExport();
+        }
+
         if (window.lucide) window.lucide.createIcons();
     }
 
@@ -97,7 +103,7 @@ class BrandApp {
                 `;
                 footer.appendChild(badge);
             }
-            badge.innerText = "v6.2 [Imagen 3.0]";
+            badge.innerText = "v6.3 [Premium UI]";
         }
     }
 
@@ -387,28 +393,30 @@ class BrandApp {
             }
         }
 
-        // Handle tags if they exist (backward compatibility or future use)
-        if (config.tags && document.getElementById('ai-tags')) {
-            // ... existing tag logic if needed ...
-        }
+        // Save state for export
+        this.currentConfig = config;
     }
 
     async generateImage(prompt) {
+        const overlay = document.getElementById('gen-status-overlay');
+        const genImg = document.getElementById('generated-logo');
+        const placeholder = document.getElementById('logo-placeholder');
+
+        if (overlay) overlay.classList.remove('hidden');
+        if (placeholder) placeholder.classList.add('hidden');
+        if (genImg) genImg.classList.add('hidden');
+
         this.updateStatus("Generando Imagen (Imagen 3.0)...", "warn");
-        this.showLoader(true, "Materializando visión creativa con Imagen 3.0...");
 
         const IMAGE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${this.imageModel}:generateContent?key=${this.apiKey}`;
 
         const payload = {
             contents: [{
                 parts: [{
-                    text: `Professional brand logo/concept for: ${prompt}. High quality, minimalist, elegant, 4k. Vector style.`
+                    text: `Professional brand logo/concept for: ${prompt}. High quality, minimalist, elegant, 4k. Flat vector style.`
                 }]
             }]
         };
-
-        const genImg = document.getElementById('generated-logo');
-        const placeholder = document.getElementById('logo-placeholder');
 
         try {
             const response = await fetch(IMAGE_URL, {
@@ -429,26 +437,45 @@ class BrandApp {
                     genImg.src = `data:${mime};base64,${base64}`;
                     genImg.classList.remove('hidden');
                 }
-                if (placeholder) placeholder.classList.add('hidden');
-
-                this.addMessage("He generado una propuesta visual para el logotipo basado en nuestra conversación.", 'ai');
+                this.addMessage("Propuesta visual generada. ¿Qué opinas?", 'ai');
             } else {
-                console.log("No inlineData found, simulating placeholder for demo.");
+                // Mock behavior for demo if API doesn't return inlineData directly
                 if (genImg) {
-                    genImg.src = "https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=400&auto=format&fit=crop";
+                    genImg.src = `https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=400&auto=format&fit=crop`;
                     genImg.classList.remove('hidden');
                 }
-                if (placeholder) placeholder.classList.add('hidden');
             }
 
-            this.updateStatus("Imagen Lista", "success");
+            this.updateStatus("Logo Generado", "success");
         } catch (e) {
             console.error(e);
             this.updateStatus("Error Imagen", "error");
-            this.addMessage("Hubo un detalle técnico con la generación de imagen, pero sigo trabajando en tu estrategia.", 'ai');
         } finally {
-            this.showLoader(false);
+            if (overlay) overlay.classList.add('hidden');
         }
+    }
+
+    handleExport() {
+        if (!this.currentConfig) {
+            alert("Primero genera algunos elementos de marca con la IA.");
+            return;
+        }
+
+        const data = {
+            usuario: this.userData.name,
+            profesion: this.userData.profession,
+            identidad: this.currentConfig,
+            fecha: new Date().toLocaleDateString()
+        };
+
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `brandia-kit-${this.userData.name.toLowerCase().replace(/\s/g, '-')}.json`;
+        a.click();
+
+        this.addMessage("He preparado tu Guía de Marca digital (JSON) para descargar.", 'ai');
     }
 
     handleNoLogo() {

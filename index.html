@@ -64,92 +64,101 @@
                 </div>
 
                 <div class="dashboard-grid">
-                    <!-- Chat IA Interactiva -->
-                    <div class="card chat-card">
-                        <div class="card-header">
-                            <h3><i data-lucide="message-square"></i> Asistente de Marca IA</h3>
-                        </div>
-                        <div class="chat-container" id="chat-messages">
-                            <div class="message ai">
-                                ¡Hola! Soy tu consultor de marca. ¿Con qué valor te sientes más identificado hoy:
-                                profesionalismo clásico o innovación disruptiva?
+                    <div class="dashboard-main-grid">
+                        <!-- Chat IA Interactiva -->
+                        <div class="card chat-card">
+                            <div class="card-header">
+                                <h3><i data-lucide="message-square"></i> Asistente de Marca IA</h3>
+                            </div>
+                            <div class="chat-container" id="chat-messages">
+                                <div class="message ai">
+                                    ¡Hola! Soy tu consultor de marca. ¿Con qué valor te sientes más identificado hoy:
+                                    profesionalismo clásico o innovación disruptiva?
+                                </div>
+                            </div>
+                            <div class="chat-input-area">
+                                <input type="text" id="chat-input" placeholder="Escribe tu respuesta...">
+                                <button id="send-msg"><i data-lucide="send"></i></button>
                             </div>
                         </div>
-                        <div class="chat-input-area">
-                            <input type="text" id="chat-input" placeholder="Escribe tu respuesta...">
-                            <button id="send-msg"><i data-lucide="send"></i></button>
+
+                        <!-- Brand Board -->
+                        <div class="brand-board" id="brand-board">
+                            <div class="board-header">
+                                <div class="header-left">
+                                    <h2><i data-lucide="layout"></i> Brand Board</h2>
+                                    <p>Identidad visual en tiempo real</p>
+                                </div>
+                                <button class="btn-secondary" id="btn-export">
+                                    <i data-lucide="download"></i> Exportar
+                                </button>
+                            </div>
+
+                            <div class="board-grid">
+                                <!-- Logo Section -->
+                                <div class="board-card logo-section">
+                                    <div class="card-label">Logotipo</div>
+                                    <div class="logo-display">
+                                        <div class="logo-box">
+                                            <span>Actual</span>
+                                            <img src="assets/logo_real.png" alt="Logo Actual" id="preview-img">
+                                        </div>
+                                        <div class="logo-box generated" id="logo-gen-container">
+                                            <span>Propuesta IA</span>
+                                            <div class="gen-status-overlay hidden" id="gen-status-overlay">
+                                                <div class="mini-spinner"></div>
+                                                <span>Materializando...</span>
+                                            </div>
+                                            <img src="" alt="Propuesta" id="generated-logo" class="hidden">
+                                            <div class="placeholder" id="logo-placeholder">Esperando prompt...</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Colors Section -->
+                                <div class="board-card colors-section">
+                                    <div class="card-label">Colores</div>
+                                    <div class="colors-grid" id="suggested-colors">
+                                        <!-- Dynamic colors -->
+                                    </div>
+                                </div>
+
+                                <!-- Typography Section -->
+                                <div class="board-card typo-section">
+                                    <div class="card-label">Tipografía</div>
+                                    <div class="typo-preview" id="typo-preview">
+                                        <h1 id="font-specimen">Aa</h1>
+                                        <p id="suggested-font-name">Outfit Bold</p>
+                                    </div>
+                                </div>
+
+                                <!-- Icons Section -->
+                                <div class="board-card icons-section">
+                                    <div class="card-label">Iconos</div>
+                                    <div class="icons-grid" id="suggested-icons">
+                                        <!-- Dynamic icons -->
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="brand-board" id="brand-board">
-                        <div class="board-header">
-                            <h2><i data-lucide="layout"></i> Brand Board <span class="badge">v6.2</span></h2>
-                            <p>Tu identidad visual materializada en tiempo real</p>
-                        </div>
-
-                        <div class="board-grid">
-                            <!-- Logo Section -->
-                            <div class="board-card logo-section">
-                                <div class="card-label">Logotipo</div>
-                                <div class="logo-display">
-                                    <div class="logo-box">
-                                        <span>Actual</span>
-                                        <img src="assets/logo_real.png" alt="Logo Actual" id="preview-img">
-                                    </div>
-                                    <div class="logo-box generated">
-                                        <span>Propuesta IA</span>
-                                        <img src="" alt="Sin propuesta" id="generated-logo" class="hidden">
-                                        <div class="placeholder" id="logo-placeholder">Esperando prompt...</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Colors Section -->
-                            <div class="board-card colors-section">
-                                <div class="card-label">Paleta de Colores</div>
-                                <div class="colors-grid" id="suggested-colors">
-                                    <!-- Dynamic colors -->
-                                </div>
-                            </div>
-
-                            <!-- Typography Section -->
-                            <div class="board-card typo-section">
-                                <div class="card-label">Tipografía</div>
-                                <div class="typo-preview" id="typo-preview">
-                                    <h1 id="font-specimen">Aa</h1>
-                                    <p id="suggested-font-name">Outfit Bold</p>
-                                    <div class="typo-meta">Moderno • Legible • Profesional</div>
-                                </div>
-                            </div>
-
-                            <!-- Icons Section -->
-                            <div class="board-card icons-section">
-                                <div class="card-label">Iconografía</div>
-                                <div class="icons-grid" id="suggested-icons">
-                                    <!-- Dynamic icons -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="dashboard-grid second-row">
+                    <div class="secondary-actions-row">
                         <!-- Dropzone -->
                         <div class="card drop-card">
                             <div class="drop-zone" id="drop-zone">
                                 <div class="drop-zone-content">
                                     <i data-lucide="upload-cloud" class="drop-icon-svg"></i>
-                                    <h3>Sube tu Logotipo</h3>
-                                    <p>Suelte su archivo aquí o haga clic para buscar</p>
+                                    <span>Sube tu Logotipo actual</span>
                                 </div>
                                 <input type="file" id="file-input" hidden accept="image/*">
                             </div>
                             <div class="no-logo-action">
-                                <p>¿No tienes un logo todavía? <button id="no-logo-btn" class="link-btn">La IA puede
-                                        crearlo
-                                        por ti</button></p>
+                                <button id="no-logo-btn" class="link-btn">La IA puede crear uno por ti</button>
                             </div>
                         </div>
                     </div>
+                </div>
             </section>
         </main>
     </div>
