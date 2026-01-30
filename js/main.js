@@ -32,10 +32,11 @@ class BrandApp {
 
     init() {
         this.addConnectionStatusUI();
+        document.title = "BrandIA v5.3 (Flash)"; // Visual confirm of update
 
-        // --- CHANGE 1: Hardcoded Model (Fixed based on user discovery) ---
-        this.selectedModel = "gemini-1.5-pro-latest";
-        this.updateStatus(`Modelo Fijo: ${this.selectedModel}`, "info");
+        // --- CHANGE 1: Switched to Flash (Faster, less timeouts) ---
+        this.selectedModel = "gemini-1.5-flash";
+        this.updateStatus(`IA Activa: ${this.selectedModel}`, "info");
 
         if (this.btnStart) this.btnStart.onclick = () => this.handleOnboarding();
 
