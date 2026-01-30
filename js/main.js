@@ -1,10 +1,10 @@
 /**
- * BrandIA Engine v7.1 - Interactive Focus + Concise AI
+ * BrandIA Engine v7.2 - Memory Sync + Intelligent Interactivity
  */
 
 class BrandApp {
     constructor() {
-        console.log("🚀 INITIALIZING BRANDIA ENGINE v7.0 [ULTIMATE STABLE]...");
+        console.log("🚀 INITIALIZING BRANDIA ENGINE v7.2 [MEMORY SYNC]...");
 
         try {
             // Core UI Selectors
@@ -28,6 +28,7 @@ class BrandApp {
 
             // Data State
             this.userData = { name: '', profession: '' };
+            this.chatHistory = []; // Global Conversation Memory
             this.apiKey = "AIzaSyDW2KmzfXWc" + "PA3KVwTGZAFmsfNiTELk1js";
             this.selectedModel = "gemini-3-flash-preview";
             this.imageModel = "imagen-3.0-generate-001";
@@ -35,22 +36,15 @@ class BrandApp {
             this.safeInit();
         } catch (err) {
             console.error("FATAL CONSTRUCTOR ERROR:", err);
-            // Universal Panic Recovery
-            window.bypassLogin();
+            if (window.bypassLogin) window.bypassLogin();
         }
     }
 
     safeInit() {
-        console.log("Setting up event listeners...");
-
-        // 1. Connection UI
         this.addConnectionStatusUI();
-        this.updateStatus(`IA Actora: Omega 7.0`, "success");
-
-        // 2. Version Display
+        this.updateStatus(`IA Operativa: Memoria 7.2`, "success");
         this.updateVersionBadge();
 
-        // 3. Onboarding
         if (this.btnStart) {
             this.btnStart.onclick = (e) => {
                 e.preventDefault();
@@ -58,14 +52,12 @@ class BrandApp {
             };
         }
 
-        // 4. Logo Upload Logic
         if (this.noLogoBtn) this.noLogoBtn.onclick = (e) => { e.stopPropagation(); this.handleNoLogo(); };
         if (this.dropZone) {
             this.dropZone.onclick = (e) => { if (e.target !== this.noLogoBtn) this.fileInput.click(); };
             this.fileInput.onchange = (e) => { if (e.target.files.length) this.handleFiles(e.target.files[0]); };
         }
 
-        // 5. Chat Logic
         if (this.sendMsg) {
             this.sendMsg.onclick = () => this.handleUserMessage();
             if (this.chatInput) {
@@ -73,14 +65,10 @@ class BrandApp {
             }
         }
 
-        // 6. Extra Actions
-        if (this.btnGenerate) this.btnGenerate.onclick = () => this.runSimulation("Explorando nuevas vertientes...");
+        if (this.btnGenerate) this.btnGenerate.onclick = () => this.runSimulation("IA Generando conceptos...");
         if (this.btnExport) this.btnExport.onclick = () => this.handleExport();
 
-        // 7. Lucide Icons
         if (window.lucide) window.lucide.createIcons();
-
-        console.log("✅ Engine Initialized.");
     }
 
     updateVersionBadge() {
@@ -93,43 +81,31 @@ class BrandApp {
                 badge.style.cssText = "font-size:10px; background:#8a2a82; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
                 footer.appendChild(badge);
             }
-            badge.innerText = "v7.1 [DIRECT]";
+            badge.innerText = "v7.2 [MEMORY]";
         }
     }
 
     handleOnboarding() {
-        console.log("Processing Onboarding...");
         const nameInput = document.getElementById('ob-user-name');
         const profInput = document.getElementById('ob-user-prof');
 
-        const nameVal = nameInput ? nameInput.value.trim() : "";
-        const profVal = profInput ? profInput.value.trim() : "";
+        this.userData.name = nameInput ? nameInput.value.trim() : "Usuario";
+        this.userData.profession = profInput ? profInput.value.trim() : "Brand";
 
-        // Even if empty, let them pass if they are presenting
-        this.userData.name = nameVal || "Usuario";
-        this.userData.profession = profVal || "Branding";
+        document.getElementById('hello-name').innerText = this.userData.name;
 
-        const helloName = document.getElementById('hello-name');
-        if (helloName) helloName.innerText = this.userData.name;
-
-        // Transition Forceful
-        if (this.onboarding) {
-            this.onboarding.style.display = 'none';
-            this.onboarding.classList.add('hidden');
-        }
+        if (this.onboarding) this.onboarding.style.display = 'none';
         if (this.appMain) {
             this.appMain.classList.remove('blur-content');
             this.appMain.style.filter = 'none';
             this.appMain.style.pointerEvents = 'auto';
         }
 
-        this.addMessage(`¡Hola ${this.userData.name}! Estamos listos para elevar tu marca en ${this.userData.profession || 'tu sector'}.`, 'ai');
-
+        this.addMessage(`¡Hola ${this.userData.name}! Memoria activa. ¿Cómo visualizas tu marca de ${this.userData.profession}?`, 'ai');
         if (window.lucide) window.lucide.createIcons();
     }
 
     handleUserMessage() {
-        if (!this.chatInput) return;
         const text = this.chatInput.value.trim();
         if (!text) return;
 
@@ -143,26 +119,44 @@ class BrandApp {
 
     async callGeminiAPI(prompt) {
         const PEM_URL = `https://generativelanguage.googleapis.com/v1beta/models/${this.selectedModel}:generateContent?key=${this.apiKey}`;
-        this.updateStatus("Vibrando ideas...", "warn");
+        this.updateStatus("Sincronizando...", "warn");
 
-        const context = `Eres BrandIA v7.1. Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
-        OBJETIVO: Ser directo, conciso y escueto. No des explicaciones largas.
-        ESTILO: Profesional pero al grano. Haz preguntas cortas para avanzar.
-        PARA ACTUALIZAR EL BOARD, usa: [[CONFIG: {"palette": ["#Hex1", "#Hex2", "#Hex3", "#Hex4"], "font": "FontName", "icons": ["lucide-icon1", "lucide-icon2", "..."]}]]`;
+        const context = `Eres BrandIA v7.2. Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
+        REGLA DE ORO: Tienes memoria histórica. Revisa los mensajes anteriores para no repetir preguntas de datos que ya tienes.
+        PERSONALIDAD: Sé muy breve, directo y escueto.
+        MODO BOARD: NO envíes el bloque [[CONFIG: ...]] de forma redundante. Solo si propones un cambio visual aceptado o claro.
+        LOGOS: Para generar logos usa [[IMAGE: prompt detallado]]. Di "Generando visual..." antes.`;
+
+        const contents = [
+            { role: 'user', parts: [{ text: `CONTEXTO: ${context}` }] },
+            { role: 'model', parts: [{ text: "Entendido. Operaré con memoria activa y brevedad extrema." }] },
+            ...this.chatHistory,
+            { role: 'user', parts: [{ text: prompt }] }
+        ];
 
         try {
             const resp = await fetch(PEM_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: `${context}\n\nUser: ${prompt}` }] }] })
+                body: JSON.stringify({ contents: contents })
             });
             const data = await resp.json();
-            const aiText = data.candidates[0].content.parts[0].text;
-            this.handleAIResponseText(aiText);
-            this.updateStatus("IA Lista", "success");
+
+            if (data.candidates && data.candidates[0].content) {
+                const aiText = data.candidates[0].content.parts[0].text;
+
+                // Detection Image triggers
+                if (aiText.includes("[[IMAGE:")) {
+                    const match = aiText.match(/\[\[IMAGE: (.*?)\]\]/);
+                    if (match) this.generateImage(match[1]);
+                }
+
+                this.handleAIResponseText(aiText);
+                this.updateStatus("IA Lista", "success");
+            }
         } catch (err) {
             console.error("API Error:", err);
-            this.fallbackSimulation(prompt);
+            this.addMessage("[CONEXIÓN] Reconectando núcleos neuronales...", 'ai');
         }
     }
 
@@ -189,17 +183,19 @@ class BrandApp {
                 config.palette.forEach(c => {
                     const div = document.createElement('div');
                     div.className = 'color-swatch-elite';
-                    div.innerHTML = `<div class="color-circle" style="background:${c}"></div><span style="font-size:10px; font-weight:bold">${c}</span>`;
+                    div.innerHTML = `<div class="color-circle" style="background:${c}"></div><div style="font-size:10px; font-weight:bold; margin-top:5px;">${c.toUpperCase()}</div>`;
                     cont.appendChild(div);
                 });
             }
         }
         if (config.font) {
             const fName = document.getElementById('font-heading-name');
+            const fPrev = document.getElementById('font-preview-text');
             if (fName) {
                 fName.innerText = config.font;
-                fName.style.fontFamily = config.font;
+                fName.style.fontFamily = `'${config.font}', sans-serif`;
             }
+            if (fPrev) fPrev.style.fontFamily = `'${config.font}', sans-serif`;
         }
         if (config.icons) {
             const iGrid = document.getElementById('icon-grid');
@@ -216,6 +212,45 @@ class BrandApp {
         }
     }
 
+    async generateImage(prompt) {
+        const overlay = document.getElementById('gen-status-overlay');
+        const genImg = document.getElementById('generated-logo');
+        const placeholder = document.getElementById('logo-placeholder');
+
+        if (overlay) overlay.classList.remove('hidden');
+        if (placeholder) placeholder.classList.add('hidden');
+        if (genImg) genImg.classList.add('hidden');
+
+        this.updateStatus("Generando Logo...", "warn");
+
+        const IMAGE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${this.imageModel}:generateContent?key=${this.apiKey}`;
+
+        try {
+            const resp = await fetch(IMAGE_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: `Professional minimalist brand logo for: ${prompt}. Vector, flat design, white background.` }] }]
+                })
+            });
+            const data = await resp.json();
+            if (data.candidates && data.candidates[0].content.parts[0].inlineData) {
+                const b64 = data.candidates[0].content.parts[0].inlineData.data;
+                if (genImg) {
+                    genImg.src = `data:image/png;base64,${b64}`;
+                    genImg.classList.remove('hidden');
+                    if (overlay) overlay.classList.add('hidden');
+                    this.updateStatus("Logo Listo", "success");
+                }
+            }
+        } catch (err) {
+            console.error("Image Error", err);
+            this.updateStatus("Error Image", "error");
+            if (overlay) overlay.classList.add('hidden');
+            if (placeholder) placeholder.classList.remove('hidden');
+        }
+    }
+
     addMessage(text, type) {
         const div = document.createElement('div');
         div.className = `message ${type}`;
@@ -224,13 +259,22 @@ class BrandApp {
             this.chatMessages.appendChild(div);
             this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
         }
+
+        const cleanText = text.replace(/<[^>]*>?/gm, '');
+        this.chatHistory.push({
+            role: type === 'user' ? 'user' : 'model',
+            parts: [{ text: cleanText }]
+        });
+
+        // Limit history for performance
+        if (this.chatHistory.length > 20) this.chatHistory.shift();
     }
 
     aiTyping(callback) {
         const div = document.createElement('div');
         div.className = 'message ai typing-indicator';
         div.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
-        this.chatMessages.appendChild(div);
+        if (this.chatMessages) this.chatMessages.appendChild(div);
         setTimeout(() => {
             div.remove();
             callback();
@@ -238,16 +282,17 @@ class BrandApp {
     }
 
     addConnectionStatusUI() {
+        if (document.getElementById('stability-status')) return;
         const div = document.createElement('div');
         div.id = 'stability-status';
         div.style.cssText = "position:fixed; bottom:10px; right:10px; background:rgba(0,0,0,0.8); color:white; padding:5px 10px; border-radius:5px; font-size:10px; z-index:1000000;";
-        div.innerHTML = '<span id="status-dot-omega">🟢</span> <span id="status-text-omega">Engine Stable</span>';
+        div.innerHTML = '🟢 Engine Memoria 7.2';
         document.body.appendChild(div);
     }
 
-    updateStatus(msg, type) {
-        const txt = document.getElementById('status-text-omega');
-        if (txt) txt.innerText = msg;
+    updateStatus(msg) {
+        const st = document.getElementById('stability-status');
+        if (st) st.innerText = `🟢 ${msg}`;
     }
 
     runSimulation(text) {
@@ -263,8 +308,7 @@ class BrandApp {
         }
     }
 
-    // Standard Handlers
-    handleNoLogo() { this.addMessage("Modo 'Iniciando desde Cero' activado. La IA guiará tu visión.", 'ai'); }
+    handleNoLogo() { this.addMessage("Modo 'Creación' activo. Definamos tu identidad.", 'ai'); }
     handleFiles(file) {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -276,6 +320,8 @@ class BrandApp {
         };
         reader.readAsDataURL(file);
     }
+
+    handleExport() { alert("Exportando Brand Board... (Función Simulation)"); }
 }
 
 window.onload = () => { new BrandApp(); };

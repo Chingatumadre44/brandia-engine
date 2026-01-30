@@ -537,8 +537,9 @@ body {
 
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 3rem;
+    grid-template-columns: 1fr 1fr;
+    /* Elite Balance 50/50 */
+    gap: 2.5rem;
     align-items: start;
 }
 
@@ -887,12 +888,12 @@ body {
 
 /* Brand Board v6.2 */
 .brand-board {
-    background: linear-gradient(135deg, #fff, #f0f4f8);
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(20px);
     padding: 2.5rem;
-    border-radius: 30px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
-    margin: 2rem 0;
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 40px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .board-header {
