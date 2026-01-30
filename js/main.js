@@ -1,6 +1,5 @@
 /**
- * BrandIA Engine v7.0 - OMEGA STABILITY [Final Production Build]
- * Logic: Bulletproof initialization, error-resistant flows, and dashboard restoration.
+ * BrandIA Engine v7.1 - Interactive Focus + Concise AI
  */
 
 class BrandApp {
@@ -94,7 +93,7 @@ class BrandApp {
                 badge.style.cssText = "font-size:10px; background:#8a2a82; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
                 footer.appendChild(badge);
             }
-            badge.innerText = "v7.0 [ELITE]";
+            badge.innerText = "v7.1 [DIRECT]";
         }
     }
 
@@ -146,8 +145,9 @@ class BrandApp {
         const PEM_URL = `https://generativelanguage.googleapis.com/v1beta/models/${this.selectedModel}:generateContent?key=${this.apiKey}`;
         this.updateStatus("Vibrando ideas...", "warn");
 
-        const context = `Eres BrandIA v7.0. Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
-        SIEMPRE responde de forma profesional. 
+        const context = `Eres BrandIA v7.1. Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
+        OBJETIVO: Ser directo, conciso y escueto. No des explicaciones largas.
+        ESTILO: Profesional pero al grano. Haz preguntas cortas para avanzar.
         PARA ACTUALIZAR EL BOARD, usa: [[CONFIG: {"palette": ["#Hex1", "#Hex2", "#Hex3", "#Hex4"], "font": "FontName", "icons": ["lucide-icon1", "lucide-icon2", "..."]}]]`;
 
         try {
