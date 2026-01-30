@@ -1,5 +1,5 @@
 /**
- * BrandIA Engine v6.5 - Dashboard Optimization + Logo Fix + Sidebar UI
+ * BrandIA Engine v6.6 - Start Button Fix + Onboarding Restore
  */
 
 class BrandApp {
@@ -8,7 +8,7 @@ class BrandApp {
         this.appMain = document.getElementById('app-main');
         this.onboarding = document.getElementById('onboarding');
         this.btnStart = document.getElementById('btn-start');
-        this.btnGenerate = document.getElementById('btn-generate');
+        this.btnGenerate = document.getElementById('btn-new-brand');
         this.dropZone = document.getElementById('drop-zone');
         this.fileInput = document.getElementById('file-input');
         this.noLogoBtn = document.getElementById('no-logo-btn');
@@ -106,7 +106,8 @@ class BrandApp {
                 `;
                 footer.appendChild(badge);
             }
-            badge.innerText = "v6.6 [Master Hub]"; // Version incremented
+            badge.innerText = "v6.6 [Fix Start]";
+            // Version incremented
         }
     }
 
@@ -214,25 +215,21 @@ class BrandApp {
     }
 
     handleOnboarding() {
-        const nameVal = document.getElementById('ob-name').value;
-        const profVal = document.getElementById('ob-profession').value;
+        const nameVal = document.getElementById('user-name-input').value;
+        const profVal = document.getElementById('user-prof-input').value;
 
         if (!nameVal) { alert("Por favor ingresa tu nombre."); return; }
 
         this.userData.name = nameVal;
         this.userData.profession = profVal;
 
-        // Custom greeting
-        if (profVal === 'doctor') this.greeting = "Hola Doctor(a). Diseñemos una marca que transmita confianza y cuidado.";
-        else if (profVal === 'architect') this.greeting = "Hola Arquitecto(a). Construyamos una identidad sólida y estructural.";
-        else this.greeting = "Hola. Vamos a crear una marca única para ti.";
+        this.greeting = `Hola ${nameVal}. Vamos a crear una identidad visual potente para tu negocio de ${profVal || 'branding'}.`;
 
-        document.getElementById('hello-name').innerText = nameVal;
-        document.getElementById('user-display-name').innerText = nameVal;
-        document.getElementById('user-avatar-initials').innerText = nameVal.substring(0, 2).toUpperCase();
+        const helloName = document.getElementById('hello-name');
+        if (helloName) helloName.innerText = nameVal;
 
-        this.onboarding.classList.add('hidden');
-        this.appMain.classList.remove('blur-content');
+        if (this.onboarding) this.onboarding.classList.add('hidden');
+        if (this.appMain) this.appMain.classList.remove('blur-content');
 
         // Initial connection test
         this.runSimulation("Conectando con Nucleo Neuronal Gemini...");

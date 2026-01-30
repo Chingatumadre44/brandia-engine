@@ -36,14 +36,35 @@
             </div>
         </aside>
 
-        <main class="main-content">
+        <div id="onboarding" class="onboarding-overlay">
+            <div class="onboarding-card">
+                <div class="onboarding-header">
+                    <i data-lucide="sparkles" class="brand-sparkle"></i>
+                    <h2>Bienvenido a BrandIA v6.6</h2>
+                    <p>Configura tu perfil para empezar a diseñar tu identidad.</p>
+                </div>
+                <div class="onboarding-form">
+                    <div class="input-group-v2">
+                        <label>¿Cómo te llamas?</label>
+                        <input type="text" id="user-name-input" placeholder="Tu nombre...">
+                    </div>
+                    <div class="input-group-v2">
+                        <label>¿Qué profesión o negocio tienes?</label>
+                        <input type="text" id="user-prof-input" placeholder="Ej: Abogado, Clínica, Freelance...">
+                    </div>
+                    <button id="btn-start" class="btn-primary-large">Comenzar Análisis</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-container" id="app-main">
             <header class="top-bar">
                 <div class="search-container">
                     <i data-lucide="search"></i>
                     <input type="text" placeholder="Buscar en mis activos...">
                 </div>
                 <div class="top-actions">
-                    <button class="btn-primary" id="btn-generate">
+                    <button class="btn-primary" id="btn-new-brand">
                         <i data-lucide="zap"></i> Generar Nuevo
                     </button>
                     <div class="notification-bell"><i data-lucide="bell"></i></div>
@@ -70,9 +91,9 @@
                                 </div>
                             </div>
                             <div class="chat-input-area">
-                                <textarea id="user-input" placeholder="Escribe tu visión de marca..."
+                                <textarea id="chat-input" placeholder="Escribe tu visión de marca..."
                                     rows="1"></textarea>
-                                <button id="btn-generate">
+                                <button id="send-msg">
                                     <i data-lucide="sparkles"></i>
                                 </button>
                             </div>
@@ -165,8 +186,8 @@
                     </div>
                 </div>
 
-    </div>
-    <input type="file" id="file-input" hidden accept="image/*">
+        </div>
+        <input type="file" id="file-input" hidden accept="image/*">
     </div>
     <div class="no-logo-action">
         <button id="no-logo-btn" class="link-btn">La IA puede crear uno por ti</button>
