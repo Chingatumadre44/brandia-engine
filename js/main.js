@@ -130,8 +130,7 @@ class BrandApp {
         const contents = [
             { role: 'user', parts: [{ text: `CONTEXTO: ${context}` }] },
             { role: 'model', parts: [{ text: "Entendido. Operaré con memoria activa y brevedad extrema." }] },
-            ...this.chatHistory,
-            { role: 'user', parts: [{ text: prompt }] }
+            ...this.chatHistory
         ];
 
         try {
