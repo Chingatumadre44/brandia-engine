@@ -4,50 +4,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BrandIA Engine v6.9 [Final Stabilized]</title>
-    <!-- Last Build: 2026-01-30 17:10 -->
+    <title>BrandIA Engine v7.0 [MASTER STABLE]</title>
+    <!-- Last Build: 2026-01-30 17:15 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Outfit:wght@300;400;600;800&family=Playfair+Display:wght@700&family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=7.0">
+
+    <!-- Emergency Bypass Script -->
+    <script>
+        window.bypassLogin = function () {
+            console.log("EJECUTANDO BYPASS DE EMERGENCIA...");
+            const ob = document.getElementById('onboarding');
+            const app = document.getElementById('app-main');
+            if (ob) ob.style.display = 'none';
+            if (app) {
+                app.classList.remove('blur-content');
+                app.style.filter = 'none';
+                app.style.pointerEvents = 'auto';
+            }
+        };
+    </script>
 </head>
 
 <body>
-    <!-- Capa de Onboarding (Restored & Tested) -->
+    <!-- Capa de Onboarding (Resistant Flow) -->
     <div id="onboarding" class="onboarding-overlay">
         <div class="onboarding-bg-glow"></div>
         <div class="onboarding-card">
             <div class="onboarding-header">
                 <div class="brand-presence">
                     <i data-lucide="sparkles" class="brand-sparkle pulse"></i>
-                    <span class="logo-text">BrandIA Elite v6.8</span>
+                    <span class="logo-text">BrandIA v7.0 [Elite]</span>
                 </div>
-                <h2>Bienvenido</h2>
-                <p>Ingresa tus datos para activar la inteligencia de marca.</p>
+                <h2>Bienvenido de nuevo</h2>
+                <p>Configura tu identidad profesional para acceder al Dashboard.</p>
             </div>
             <div class="onboarding-form">
                 <div class="input-group-premium">
-                    <label>TU NOMBRE</label>
+                    <label>NOMBRE COMPLETO</label>
                     <div class="input-wrapper">
                         <i data-lucide="user" class="input-icon"></i>
-                        <input type="text" id="ob-user-name" placeholder="Ej: Ana Teniente" autocomplete="off">
+                        <input type="text" id="ob-user-name" placeholder="Ej: Dra. Ana Teniente" autocomplete="off">
                     </div>
                 </div>
                 <div class="input-group-premium">
-                    <label>TU PROFESIÓN O NEGOCIO</label>
+                    <label>TU SECTOR O NEGOCIO</label>
                     <div class="input-wrapper">
                         <i data-lucide="briefcase" class="input-icon"></i>
-                        <input type="text" id="ob-user-prof" placeholder="Ej: Arquitecta, Tech, Medicina..."
+                        <input type="text" id="ob-user-prof" placeholder="Ej: Medicina, Diseño, Legal..."
                             autocomplete="off">
                     </div>
                 </div>
                 <button id="btn-start" class="btn-primary-mega">
-                    <span>ACTIVAR MOTOR IA</span>
+                    <span>OMITIR Y ACCEDER AL DASHBOARD</span>
                     <i data-lucide="zap"></i>
                 </button>
+                <p style="margin-top:20px; font-size:0.8rem; color:#94a3b8; cursor:pointer;" onclick="bypassLogin()">
+                    ¿Problemas? Haz clic aquí para entrar directamente.
+                </p>
             </div>
         </div>
     </div>
@@ -69,7 +87,7 @@
                 </a>
             </nav>
             <div id="sidebar-footer" class="sidebar-footer">
-                <!-- v6.8 Badge injected by JS -->
+                <!-- Injected v7.0 Badge -->
             </div>
         </aside>
 
@@ -90,7 +108,7 @@
             <section class="workspace">
                 <div class="welcome-header">
                     <h1>¡Hola, <span id="hello-name">Invitado</span>!</h1>
-                    <p>Bienvenido a tu generador de marca inteligente. Tu identidad visual a un clic.</p>
+                    <p>Bienvenido a tu suite de branding inteligente. Tu marca, simplificada.</p>
                 </div>
 
                 <div class="dashboard-grid">
@@ -102,7 +120,8 @@
                             </div>
                             <div class="chat-container" id="chat-messages">
                                 <div class="message ai">
-                                    ¡Hola! Soy tu consultor de marca. ¿Qué vision tienes para tu negocio hoy?
+                                    ¡Bienvenido al sistema v7.0! Estoy listo para procesar tu visión creativa.
+                                    ¿En qué proyecto de marca trabajaremos hoy?
                                 </div>
                             </div>
                             <div class="chat-input-area">
@@ -118,13 +137,13 @@
                         <div class="board-card upload-section-v2">
                             <div class="upload-header">
                                 <i data-lucide="upload-cloud"></i>
-                                <span>Actualizar logo actual</span>
+                                <span>Subir / Actualizar Logo Actual</span>
                             </div>
                             <div class="upload-controls">
                                 <div id="drop-zone" class="drop-zone-mini">
-                                    <span id="upload-hint">Subir imagen</span>
+                                    <span id="upload-hint">Subir Archivo</span>
                                     <input type="file" id="file-input" hidden accept="image/*">
-                                    <button id="btn-upload" class="btn-secondary-mini">Subir</button>
+                                    <button id="btn-upload" class="btn-secondary-mini">Buscar</button>
                                 </div>
                                 <button id="no-logo-btn" class="btn-ghost-mini">Usar IA</button>
                                 <div id="preview-cont" class="preview-mini hidden">
@@ -139,7 +158,7 @@
                         <div class="board-header">
                             <div class="header-left">
                                 <h2><i data-lucide="layout"></i> Brand Board</h2>
-                                <p>Identidad visual estratégica</p>
+                                <p>Identidad Visual Estratégica</p>
                             </div>
                             <button class="btn-secondary" id="btn-export">
                                 <i data-lucide="download"></i> Exportar
@@ -149,7 +168,7 @@
                         <div class="board-grid">
                             <!-- Logo Section -->
                             <div class="board-card logo-section">
-                                <div class="card-label">Logotipo</div>
+                                <div class="card-label">Identidad Visual</div>
                                 <div class="logo-display">
                                     <div class="logo-box current">
                                         <span class="label">ACTUAL</span>
@@ -157,17 +176,17 @@
                                             <img id="logo-actual-display" src="" alt="" class="hidden">
                                             <div id="logo-empty-state" class="empty-logo-msg">
                                                 <i data-lucide="image"></i>
-                                                <span>Sin logo</span>
+                                                <span>Sin logo base</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="logo-box generated" id="logo-gen-container">
-                                        <span class="label">PROPUESTA IA</span>
+                                        <span class="label">SUGERIDO IA</span>
                                         <div class="gen-status-overlay hidden" id="gen-status-overlay">
                                             <div class="mini-spinner"></div>
                                         </div>
                                         <img src="" alt="Propuesta" id="generated-logo" class="hidden">
-                                        <div class="placeholder" id="logo-placeholder">Listo para generar</div>
+                                        <div class="placeholder" id="logo-placeholder">Listo para crear</div>
                                     </div>
                                 </div>
                             </div>
@@ -176,6 +195,7 @@
                             <div class="board-card color-section">
                                 <div class="card-label">Paleta de Colores</div>
                                 <div class="color-palette" id="color-palette">
+                                    <!-- Dynamic Elite Swatches -->
                                     <div class="color-swatch-empty"></div>
                                     <div class="color-swatch-empty"></div>
                                     <div class="color-swatch-empty"></div>
@@ -185,17 +205,18 @@
 
                             <!-- Typography Section -->
                             <div class="board-card font-section">
-                                <div class="card-label">Tipografía</div>
+                                <div class="card-label">Tipografía Elite</div>
                                 <div class="font-preview">
                                     <h4 id="font-heading-name">Inter / Montserrat</h4>
-                                    <p id="font-preview-text">Muestra de texto de marca</p>
+                                    <p id="font-preview-text">La tipografía es la voz de tu marca.</p>
                                 </div>
                             </div>
 
                             <!-- Icons Section -->
                             <div class="board-card icon-section">
-                                <div class="card-label">Iconografía</div>
+                                <div class="card-label">Iconografía IA</div>
                                 <div class="icon-grid" id="icon-grid">
+                                    <!-- Dynamic Elite Icons -->
                                     <div class="icon-swatch-empty"></div>
                                     <div class="icon-swatch-empty"></div>
                                     <div class="icon-swatch-empty"></div>
@@ -213,11 +234,12 @@
     <div id="loader" class="loader-overlay hidden">
         <div class="loader-content">
             <div class="spin-icon"><i data-lucide="loader-2"></i></div>
-            <p id="loader-text">Procesando...</p>
+            <p id="loader-text">Sincronizando...</p>
         </div>
     </div>
 
-    <script src="js/main.js"></script>
+    <!-- Script Versionado para romper Caché -->
+    <script src="js/main.js?v=7.0"></script>
 </body>
 
 </html>
