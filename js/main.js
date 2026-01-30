@@ -156,8 +156,8 @@ class BrandApp {
                 }
 
                 // Proxy Test
-                log("3. Prueba de Túnel Proxy...");
-                const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(discoveryUrl);
+                log("3. Prueba de Túnel Proxy (Heroku)...");
+                const proxyUrl = "https://cors-anywhere.herokuapp.com/" + discoveryUrl;
                 const t0 = performance.now();
                 const proxyResp = await fetch(proxyUrl);
                 const t1 = performance.now();
@@ -222,10 +222,9 @@ class BrandApp {
         // USE HARDCODED MODEL
         const MODEL = this.selectedModel;
 
-        // URL CLEANUP (Ensure no double colons or bad slashes)
-        // Format: v1beta/models/{MODEL}:generateContent
+        // URL CLEANUP
         const PEM_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${this.apiKey}`;
-        const PROXY_PREFIX = "https://corsproxy.io/?";
+        const PROXY_PREFIX = "https://cors-anywhere.herokuapp.com/"; // Changed to more reliable HTTPS proxy
 
         this.updateStatus(`Consultando IA...`, "info");
 
