@@ -36,7 +36,9 @@
                     </div>
                 </div>
                 <div id="version-badge-container" style="margin-top: 15px; text-align: center;">
-                    <span id="version-badge" style="font-size: 10px; background: rgba(52, 152, 219, 0.2); color: #3498db; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(52, 152, 219, 0.3); font-family: monospace;">v6.1 [G3-ULTRA]</span>
+                    <span id="version-badge"
+                        style="font-size: 10px; background: rgba(52, 152, 219, 0.2); color: #3498db; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(52, 152, 219, 0.3); font-family: monospace;">v6.1
+                        [G3-ULTRA]</span>
                 </div>
             </div>
         </aside>
@@ -79,72 +81,75 @@
                         </div>
                     </div>
 
-                    <!-- Current Branding Preview -->
-                    <div class="card preview-card">
-                        <div class="card-header">
-                            <h3>Propuesta de Identidad</h3>
+                    <div class="brand-board" id="brand-board">
+                        <div class="board-header">
+                            <h2><i data-lucide="layout"></i> Brand Board <span class="badge">v6.2</span></h2>
+                            <p>Tu identidad visual materializada en tiempo real</p>
                         </div>
-                        <div class="preview-content">
-                            <div class="current-logo">
-                                <img src="assets/logo_real.png" alt="Logo Actual" id="preview-img">
-                            </div>
-                            <div class="current-colors" id="suggested-colors">
-                                <div class="color-dot" title="#8A2A82" style="background-color: #8A2A82;"></div>
-                                <div class="color-dot" title="#5C1C57" style="background-color: #5C1C57;"></div>
-                                <div class="color-dot" title="#B056AA" style="background-color: #B056AA;"></div>
-                                <div class="color-dot" style="background-color: #FFFFFF; border: 1px solid #ddd;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="dashboard-grid second-row">
-                    <!-- AI Insights -->
-                    <div class="card insights-card">
-                        <div class="card-header">
-                            <h3>Estrategia Visual</h3>
-                        </div>
-                        <div class="insights-content">
-                            <div class="insight-item">
-                                <span class="insight-status online"></span>
-                                <p id="ai-status"><strong>IA Activa:</strong> Esperando contexto...</p>
-                            </div>
-                            <div class="insight-list" id="ai-tags">
-                                <div class="insight-tag">Análisis Pendiente</div>
-                            </div>
-                            <div class="suggested-assets">
-                                <div class="asset-item" id="font-box">
-                                    <span class="label">Tipografía Recomendada</span>
-                                    <h4 id="suggested-font-name">...</h4>
-                                </div>
-                                <div class="asset-item" id="icon-box">
-                                    <span class="label">Iconografía Recomendada</span>
-                                    <div class="icon-grid" id="suggested-icons">
-                                        <i data-lucide="activity"></i>
-                                        <i data-lucide="shield-check"></i>
-                                        <i data-lucide="heart"></i>
+                        <div class="board-grid">
+                            <!-- Logo Section -->
+                            <div class="board-card logo-section">
+                                <div class="card-label">Logotipo</div>
+                                <div class="logo-display">
+                                    <div class="logo-box">
+                                        <span>Actual</span>
+                                        <img src="assets/logo_real.png" alt="Logo Actual" id="preview-img">
+                                    </div>
+                                    <div class="logo-box generated">
+                                        <span>Propuesta IA</span>
+                                        <img src="" alt="Sin propuesta" id="generated-logo" class="hidden">
+                                        <div class="placeholder" id="logo-placeholder">Esperando prompt...</div>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Colors Section -->
+                            <div class="board-card colors-section">
+                                <div class="card-label">Paleta de Colores</div>
+                                <div class="colors-grid" id="suggested-colors">
+                                    <!-- Dynamic colors -->
+                                </div>
+                            </div>
+
+                            <!-- Typography Section -->
+                            <div class="board-card typo-section">
+                                <div class="card-label">Tipografía</div>
+                                <div class="typo-preview" id="typo-preview">
+                                    <h1 id="font-specimen">Aa</h1>
+                                    <p id="suggested-font-name">Outfit Bold</p>
+                                    <div class="typo-meta">Moderno • Legible • Profesional</div>
+                                </div>
+                            </div>
+
+                            <!-- Icons Section -->
+                            <div class="board-card icons-section">
+                                <div class="card-label">Iconografía</div>
+                                <div class="icons-grid" id="suggested-icons">
+                                    <!-- Dynamic icons -->
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Dropzone -->
-                    <div class="card drop-card">
-                        <div class="drop-zone" id="drop-zone">
-                            <div class="drop-zone-content">
-                                <i data-lucide="upload-cloud" class="drop-icon-svg"></i>
-                                <h3>Sube tu Logotipo</h3>
-                                <p>Suelte su archivo aquí o haga clic para buscar</p>
+                    <div class="dashboard-grid second-row">
+                        <!-- Dropzone -->
+                        <div class="card drop-card">
+                            <div class="drop-zone" id="drop-zone">
+                                <div class="drop-zone-content">
+                                    <i data-lucide="upload-cloud" class="drop-icon-svg"></i>
+                                    <h3>Sube tu Logotipo</h3>
+                                    <p>Suelte su archivo aquí o haga clic para buscar</p>
+                                </div>
+                                <input type="file" id="file-input" hidden accept="image/*">
                             </div>
-                            <input type="file" id="file-input" hidden accept="image/*">
-                        </div>
-                        <div class="no-logo-action">
-                            <p>¿No tienes un logo todavía? <button id="no-logo-btn" class="link-btn">La IA puede crearlo
-                                    por ti</button></p>
+                            <div class="no-logo-action">
+                                <p>¿No tienes un logo todavía? <button id="no-logo-btn" class="link-btn">La IA puede
+                                        crearlo
+                                        por ti</button></p>
+                            </div>
                         </div>
                     </div>
-                </div>
             </section>
         </main>
     </div>

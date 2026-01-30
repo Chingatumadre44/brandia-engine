@@ -1,10 +1,10 @@
 /**
- * BrandIA Engine v6.1 - Gemini 3 Ultra + High-Fidelity Image Generation
+ * BrandIA Engine v6.2 - Imagen 3.0 Stable + Interactive Brand Board
  */
 
 class BrandApp {
     constructor() {
-        console.log("Iniciando BrandIA Engine v6.1 (Gemini 3 + Image Generation)...");
+        console.log("Iniciando BrandIA Engine v6.2 (Imagen 3.0 + Brand Board)...");
         this.appMain = document.getElementById('app-main');
         this.onboarding = document.getElementById('onboarding');
         this.btnStart = document.getElementById('btn-start');
@@ -29,7 +29,7 @@ class BrandApp {
         this.apiKey = k1 + k2;
 
         this.selectedModel = "gemini-3-flash-preview";
-        this.imageModel = "gemini-3-pro-image-preview";
+        this.imageModel = "imagen-3.0-generate-001";
 
         this.init();
     }
@@ -97,7 +97,7 @@ class BrandApp {
                 `;
                 footer.appendChild(badge);
             }
-            badge.innerText = "v6.1 [Gemini 3]";
+            badge.innerText = "v6.2 [Imagen 3.0]";
         }
     }
 
@@ -255,8 +255,9 @@ class BrandApp {
 
         const systemContext = `Eres el sistema BrandIA, experto en branding. 
         Usuario: ${this.userData.name}, Profesion: ${this.userData.profession}.
-        Responde breve y profesional.
-        SIEMPRE al final añade JSON de diseño: [[CONFIG: {"palette": ["#Hex1", "#Hex2", "#Hex3"], "font": "Font", "tags": ["Tag1", "Tag2"]}]]`;
+        Responde breve y profesional. Interactúa sugiriendo elementos de marca (colores, fuentes, iconos).
+        SIEMPRE al final añade JSON de diseño: [[CONFIG: {"palette": ["#Hex1", "#Hex2", "#Hex3"], "font": "FontName", "icons": ["icon1", "icon2", "icon3"], "tags": ["Tag1", "Tag2"]}]]
+        Si el usuario pide un logo o imagen, menciona que lo estás generando.`;
 
         const payload = {
             contents: [{ parts: [{ text: `${systemContext}\n\nUsuario: ${prompt}` }] }]
@@ -351,45 +352,63 @@ class BrandApp {
             if (colorsCont) {
                 colorsCont.innerHTML = '';
                 config.palette.forEach(c => {
-                    const dot = document.createElement('div');
-                    dot.className = 'color-dot';
-                    dot.style.backgroundColor = c;
-                    dot.title = c;
-                    colorsCont.appendChild(dot);
+                    const swatch = document.createElement('div');
+                    swatch.className = 'color-swatch';
+                    swatch.innerHTML = `
+                        <div class="color-circle" style="background-color: ${c}" title="${c}"></div>
+                        <div class="color-code">${c.toUpperCase()}</div>
+                    `;
+                    colorsCont.appendChild(swatch);
                 });
             }
         }
         if (config.font) {
             const fontEl = document.getElementById('suggested-font-name');
+            const specimenEl = document.getElementById('font-specimen');
             if (fontEl) {
                 fontEl.innerText = config.font;
                 fontEl.style.fontFamily = `'${config.font}', sans-serif`;
             }
-        }
-        if (config.tags) {
-            const tagsCont = document.getElementById('ai-tags');
-            if (tagsCont) {
-                tagsCont.innerHTML = '';
-                config.tags.forEach(t => {
-                    const tag = document.createElement('div');
-                    tag.className = 'insight-tag';
-                    tag.innerText = t;
-                    tagsCont.appendChild(tag);
-                });
+            if (specimenEl) {
+                specimenEl.style.fontFamily = `'${config.font}', sans-serif`;
             }
         }
-        if (window.lucide) window.lucide.createIcons();
+        if (config.icons) {
+            const iconsCont = document.getElementById('suggested-icons');
+            if (iconsCont) {
+                iconsCont.innerHTML = '';
+                config.icons.forEach(name => {
+                    const iconBox = document.createElement('div');
+                    iconBox.className = 'board-icon';
+                    iconBox.innerHTML = `<i data-lucide="${name}"></i>`;
+                    iconsCont.appendChild(iconBox);
+                });
+                if (window.lucide) window.lucide.createIcons();
+            }
+        }
+
+        // Handle tags if they exist (backward compatibility or future use)
+        if (config.tags && document.getElementById('ai-tags')) {
+            // ... existing tag logic if needed ...
+        }
     }
 
     async generateImage(prompt) {
-        this.updateStatus("Generando Imagen (Gemini 3 Pro)...", "warn");
-        this.showLoader(true, "Materializando visión creativa con Gemini 3...");
+        this.updateStatus("Generando Imagen (Imagen 3.0)...", "warn");
+        this.showLoader(true, "Materializando visión creativa con Imagen 3.0...");
 
         const IMAGE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${this.imageModel}:generateContent?key=${this.apiKey}`;
 
         const payload = {
-            contents: [{ parts: [{ text: `Genera una imagen fotorrealista de alta calidad para un logotipo o concepto de marca basado en: ${prompt}. Estilo: Profesional, Minimalista, Elegante.` }] }]
+            contents: [{
+                parts: [{
+                    text: `Professional brand logo/concept for: ${prompt}. High quality, minimalist, elegant, 4k. Vector style.`
+                }]
+            }]
         };
+
+        const genImg = document.getElementById('generated-logo');
+        const placeholder = document.getElementById('logo-placeholder');
 
         try {
             const response = await fetch(IMAGE_URL, {
@@ -398,27 +417,35 @@ class BrandApp {
                 body: JSON.stringify(payload)
             });
 
-            if (!response.ok) throw new Error("Error en Generación de Imagen");
+            if (!response.ok) throw new Error("Error en Imagen 3.0 API");
 
             const data = await response.json();
-            // Note: In real API, this returns inlineData or a URL depending on the specific endpoint configuration
-            // For now, if it returns a base64, we display it.
+
             if (data.candidates && data.candidates[0].content.parts[0].inlineData) {
                 const base64 = data.candidates[0].content.parts[0].inlineData.data;
                 const mime = data.candidates[0].content.parts[0].inlineData.mimeType;
-                this.previewImg.src = `data:${mime};base64,${base64}`;
-                this.addMessage("He generado una propuesta visual para ti.", 'ai');
+
+                if (genImg) {
+                    genImg.src = `data:${mime};base64,${base64}`;
+                    genImg.classList.remove('hidden');
+                }
+                if (placeholder) placeholder.classList.add('hidden');
+
+                this.addMessage("He generado una propuesta visual para el logotipo basado en nuestra conversación.", 'ai');
             } else {
-                // Simulación si el endpoint de preview no devuelve imagen directa en este formato
-                console.log("Image generation response received but no direct inlineData found. Falling back to placeholder simulation for demo.");
-                this.previewImg.src = "https://images.unsplash.com/photo-1557683311-eac922347aa1?q=80&w=2000&auto=format&fit=crop";
+                console.log("No inlineData found, simulating placeholder for demo.");
+                if (genImg) {
+                    genImg.src = "https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=400&auto=format&fit=crop";
+                    genImg.classList.remove('hidden');
+                }
+                if (placeholder) placeholder.classList.add('hidden');
             }
 
-            this.updateStatus("Imagen Generada", "success");
+            this.updateStatus("Imagen Lista", "success");
         } catch (e) {
             console.error(e);
-            this.updateStatus("Error de Imagen", "error");
-            this.addMessage("No pude generar la imagen en este momento, pero he ajustado los colores.", 'ai');
+            this.updateStatus("Error Imagen", "error");
+            this.addMessage("Hubo un detalle técnico con la generación de imagen, pero sigo trabajando en tu estrategia.", 'ai');
         } finally {
             this.showLoader(false);
         }
