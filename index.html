@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrandIA | Inteligencia de Marca</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Outfit:wght@300;400;600;800&family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container blur-content" id="app-main">
+        <aside class="sidebar">
+            <div class="brand-logo">
+                <i data-lucide="sparkles" class="logo-icon-svg"></i>
+                <span class="logo-text">BrandIA</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                <a href="#builder" class="nav-item"><i data-lucide="palette"></i> Generador</a>
+                <a href="#assets" class="nav-item"><i data-lucide="folder-open"></i> Activos</a>
+                <a href="#docs" class="nav-item"><i data-lucide="file-text"></i> Guía</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar" id="user-avatar-initials">?</div>
+                    <div class="user-info">
+                        <span class="user-name" id="user-display-name">Usuario</span>
+                        <span class="user-role">Administrador</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-container">
+                    <i data-lucide="search"></i>
+                    <input type="text" placeholder="Buscar en mis activos...">
+                </div>
+                <div class="top-actions">
+                    <button class="btn-primary" id="btn-generate">
+                        <i data-lucide="zap"></i> Generar Nuevo
+                    </button>
+                    <div class="notification-bell"><i data-lucide="bell"></i></div>
+                </div>
+            </header>
+
+            <section class="workspace">
+                <div class="welcome-header">
+                    <h1>¡Hola, <span id="hello-name">Invitado</span>!</h1>
+                    <p>Bienvenido a tu generador de marca inteligente. Tu identidad visual a un clic.</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Chat IA Interactiva -->
+                    <div class="card chat-card">
+                        <div class="card-header">
+                            <h3><i data-lucide="message-square"></i> Asistente de Marca IA</h3>
+                        </div>
+                        <div class="chat-container" id="chat-messages">
+                            <div class="message ai">
+                                ¡Hola! Soy tu consultor de marca. ¿Con qué valor te sientes más identificado hoy:
+                                profesionalismo clásico o innovación disruptiva?
+                            </div>
+                        </div>
+                        <div class="chat-input-area">
+                            <input type="text" id="chat-input" placeholder="Escribe tu respuesta...">
+                            <button id="send-msg"><i data-lucide="send"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Current Branding Preview -->
+                    <div class="card preview-card">
+                        <div class="card-header">
+                            <h3>Propuesta de Identidad</h3>
+                        </div>
+                        <div class="preview-content">
+                            <div class="current-logo">
+                                <img src="assets/logo_real.png" alt="Logo Actual" id="preview-img">
+                            </div>
+                            <div class="current-colors" id="suggested-colors">
+                                <div class="color-dot" title="#8A2A82" style="background-color: #8A2A82;"></div>
+                                <div class="color-dot" title="#5C1C57" style="background-color: #5C1C57;"></div>
+                                <div class="color-dot" title="#B056AA" style="background-color: #B056AA;"></div>
+                                <div class="color-dot" style="background-color: #FFFFFF; border: 1px solid #ddd;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid second-row">
+                    <!-- AI Insights -->
+                    <div class="card insights-card">
+                        <div class="card-header">
+                            <h3>Estrategia Visual</h3>
+                        </div>
+                        <div class="insights-content">
+                            <div class="insight-item">
+                                <span class="insight-status online"></span>
+                                <p id="ai-status"><strong>IA Activa:</strong> Esperando contexto...</p>
+                            </div>
+                            <div class="insight-list" id="ai-tags">
+                                <div class="insight-tag">Análisis Pendiente</div>
+                            </div>
+                            <div class="suggested-assets">
+                                <div class="asset-item" id="font-box">
+                                    <span class="label">Tipografía Recomendada</span>
+                                    <h4 id="suggested-font-name">...</h4>
+                                </div>
+                                <div class="asset-item" id="icon-box">
+                                    <span class="label">Iconografía Recomendada</span>
+                                    <div class="icon-grid" id="suggested-icons">
+                                        <i data-lucide="activity"></i>
+                                        <i data-lucide="shield-check"></i>
+                                        <i data-lucide="heart"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dropzone -->
+                    <div class="card drop-card">
+                        <div class="drop-zone" id="drop-zone">
+                            <div class="drop-zone-content">
+                                <i data-lucide="upload-cloud" class="drop-icon-svg"></i>
+                                <h3>Sube tu Logotipo</h3>
+                                <p>Suelte su archivo aquí o haga clic para buscar</p>
+                            </div>
+                            <input type="file" id="file-input" hidden accept="image/*">
+                        </div>
+                        <div class="no-logo-action">
+                            <p>¿No tienes un logo todavía? <button id="no-logo-btn" class="link-btn">La IA puede crearlo
+                                    por ti</button></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Onboarding Step -->
+    <div id="onboarding" class="overlay">
+        <div class="onboarding-card">
+            <div class="onboarding-header">
+                <i data-lucide="sparkles" class="ai-burst"></i>
+                <h2>Bienvenido a BrandIA</h2>
+                <p>Personalicemos tu experiencia para que la IA aprenda de ti.</p>
+            </div>
+            <div class="onboarding-body">
+                <div class="input-group">
+                    <label>¿Cómo te llamas?</label>
+                    <input type="text" id="ob-name" placeholder="Ej. Ana Teniente">
+                </div>
+                <div class="input-group">
+                    <label>¿A qué te dedicas?</label>
+                    <select id="ob-profession">
+                        <option value="doctor">Medicina / Salud</option>
+                        <option value="architect">Arquitectura / Diseño</option>
+                        <option value="tech">Tecnología / Software</option>
+                        <option value="personal">Marca Personal / Coaching</option>
+                        <option value="lawyer">Leyes / Consultoría</option>
+                    </select>
+                </div>
+                <button class="btn-primary full-width" id="btn-start" type="button">
+                    Comenzar Análisis 🚀
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loader -->
+    <div id="loader" class="overlay hidden">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <p id="loader-text">BrandIA está procesando...</p>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>

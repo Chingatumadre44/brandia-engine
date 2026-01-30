@@ -1,0 +1,30 @@
+GUÍA DE IDENTIDAD VISUAL - DRA. ANA TENIENTE (ACTUALIZADA)
+
+1. CONCEPTO DE MARCA
+Especialidad: Endocrinología y Diabetes.
+Logotipo Real: Monograma "at" en caligrafía manuscrita.
+Valores: Cercanía, Personalización, Calidez y Profesionalismo.
+
+2. LOGOTIPO
+- Archivo: assets/logo_real.png
+- Descripción: Trazo fluido de las iniciales "at" en color púrpura.
+- Uso: Priorizar fondos limpios (blanco) para resaltar la pureza del trazo.
+
+3. PALETA DE COLORES
+- Púrpura Identidad: #8A2A82 (Vibrante, clínico pero cálido)
+- Púrpura Oscuro: #5C1C57 (Contraste y elegancia)
+- Acento Vibrante: #B056AA
+- White: #FFFFFF
+
+4. TIPOGRAFÍA RECOMENDADA
+- Títulos: Montserrat (Extra Bold)
+- Cuerpo: Roboto (Regular)
+- Ambas disponibles en Google Fonts.
+
+5. ESTRUCTURA DE ARCHIVOS
+/ana-teniente-branding
+  /assets
+    logo_real.png (Logo Oficial)
+  index.html (Brand Hub Interactivo)
+  style.css (Estilos alineados a marca)
+  guia_identidad.txt (Este archivo)
