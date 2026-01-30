@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BrandIA Engine v6.7 [Premium]</title>
-    <!-- Last Sync: 2026-01-30 16:51 -->
+    <title>BrandIA Engine v6.8 [Stable Elite]</title>
+    <!-- Last Build: 2026-01-30 17:00 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -16,36 +16,37 @@
 </head>
 
 <body>
-    <!-- Capa de Onboarding Premium (Glassmorphism) -->
+    <!-- Capa de Onboarding (Restored & Tested) -->
     <div id="onboarding" class="onboarding-overlay">
         <div class="onboarding-bg-glow"></div>
         <div class="onboarding-card">
             <div class="onboarding-header">
                 <div class="brand-presence">
                     <i data-lucide="sparkles" class="brand-sparkle pulse"></i>
-                    <span class="logo-text">BrandIA v6.7</span>
+                    <span class="logo-text">BrandIA Elite v6.8</span>
                 </div>
-                <h2>Diseñemos tu futuro</h2>
-                <p>Personaliza tu experiencia de marca en segundos.</p>
+                <h2>Bienvenido</h2>
+                <p>Ingresa tus datos para activar la inteligencia de marca.</p>
             </div>
             <div class="onboarding-form">
                 <div class="input-group-premium">
-                    <label for="user-name-input">¿Cómo debemos llamarte?</label>
+                    <label>TU NOMBRE</label>
                     <div class="input-wrapper">
                         <i data-lucide="user" class="input-icon"></i>
-                        <input type="text" id="user-name-input" placeholder="Ingresa tu nombre">
+                        <input type="text" id="ob-user-name" placeholder="Ej: Ana Teniente" autocomplete="off">
                     </div>
                 </div>
                 <div class="input-group-premium">
-                    <label for="user-prof-input">Tu profesión o industria</label>
+                    <label>TU PROFESIÓN O NEGOCIO</label>
                     <div class="input-wrapper">
                         <i data-lucide="briefcase" class="input-icon"></i>
-                        <input type="text" id="user-prof-input" placeholder="Ej: Médico, Arquitecto, Tech...">
+                        <input type="text" id="ob-user-prof" placeholder="Ej: Arquitecta, Tech, Medicina..."
+                            autocomplete="off">
                     </div>
                 </div>
                 <button id="btn-start" class="btn-primary-mega">
-                    <span>Empezar Transformación</span>
-                    <i data-lucide="arrow-right"></i>
+                    <span>ACTIVAR MOTOR IA</span>
+                    <i data-lucide="zap"></i>
                 </button>
             </div>
         </div>
@@ -68,7 +69,7 @@
                 </a>
             </nav>
             <div id="sidebar-footer" class="sidebar-footer">
-                <!-- Se inyecta v6.7 Premium -->
+                <!-- v6.8 Badge injected by JS -->
             </div>
         </aside>
 
@@ -101,8 +102,7 @@
                             </div>
                             <div class="chat-container" id="chat-messages">
                                 <div class="message ai">
-                                    ¡Hola! Soy tu consultor de marca. ¿Con qué valor te sientes más identificado hoy:
-                                    profesionalismo clásico o innovación disruptiva?
+                                    ¡Hola! Soy tu consultor de marca. ¿Qué vision tienes para tu negocio hoy?
                                 </div>
                             </div>
                             <div class="chat-input-area">
@@ -114,19 +114,19 @@
                             </div>
                         </div>
 
-                        <!-- Subida de Logo (Acción Rápida) -->
+                        <!-- Subida de Logo -->
                         <div class="board-card upload-section-v2">
                             <div class="upload-header">
                                 <i data-lucide="upload-cloud"></i>
-                                <span>Sube tu logo actual</span>
+                                <span>Actualizar logo actual</span>
                             </div>
                             <div class="upload-controls">
                                 <div id="drop-zone" class="drop-zone-mini">
-                                    <span id="upload-hint">Arrastra aquí</span>
+                                    <span id="upload-hint">Subir imagen</span>
                                     <input type="file" id="file-input" hidden accept="image/*">
-                                    <button id="btn-upload" class="btn-secondary-mini">Buscar</button>
+                                    <button id="btn-upload" class="btn-secondary-mini">Subir</button>
                                 </div>
-                                <button id="no-logo-btn" class="btn-ghost-mini">No tengo logo</button>
+                                <button id="no-logo-btn" class="btn-ghost-mini">Usar IA</button>
                                 <div id="preview-cont" class="preview-mini hidden">
                                     <img id="preview-img" src="" alt="Preview">
                                 </div>
@@ -139,7 +139,7 @@
                         <div class="board-header">
                             <div class="header-left">
                                 <h2><i data-lucide="layout"></i> Brand Board</h2>
-                                <p>Identidad visual en tiempo real</p>
+                                <p>Identidad visual estratégica</p>
                             </div>
                             <button class="btn-secondary" id="btn-export">
                                 <i data-lucide="download"></i> Exportar
@@ -165,10 +165,9 @@
                                         <span class="label">PROPUESTA IA</span>
                                         <div class="gen-status-overlay hidden" id="gen-status-overlay">
                                             <div class="mini-spinner"></div>
-                                            <span>Materializando...</span>
                                         </div>
                                         <img src="" alt="Propuesta" id="generated-logo" class="hidden">
-                                        <div class="placeholder" id="logo-placeholder">Esperando prompt...</div>
+                                        <div class="placeholder" id="logo-placeholder">Listo para generar</div>
                                     </div>
                                 </div>
                             </div>
@@ -177,7 +176,6 @@
                             <div class="board-card color-section">
                                 <div class="card-label">Paleta de Colores</div>
                                 <div class="color-palette" id="color-palette">
-                                    <!-- Dinámico -->
                                     <div class="color-swatch-empty"></div>
                                     <div class="color-swatch-empty"></div>
                                     <div class="color-swatch-empty"></div>
@@ -189,15 +187,14 @@
                             <div class="board-card font-section">
                                 <div class="card-label">Tipografía</div>
                                 <div class="font-preview">
-                                    <h4 id="font-heading-name">Montserrat</h4>
-                                    <p id="font-preview-text" style="font-family: 'Space Mono', monospace;">
-                                        ABCDEFGHIJKLMN abcdefghijklmn</p>
+                                    <h4 id="font-heading-name">Inter / Montserrat</h4>
+                                    <p id="font-preview-text">Muestra de texto de marca</p>
                                 </div>
                             </div>
 
                             <!-- Icons Section -->
                             <div class="board-card icon-section">
-                                <div class="card-label">Iconografía Sugerida</div>
+                                <div class="card-label">Iconografía</div>
                                 <div class="icon-grid" id="icon-grid">
                                     <div class="icon-swatch-empty"></div>
                                     <div class="icon-swatch-empty"></div>
@@ -213,10 +210,10 @@
     </div>
 
     <!-- Loader General -->
-    <div id="loader" class="onboarding-overlay hidden">
+    <div id="loader" class="loader-overlay hidden">
         <div class="loader-content">
-            <div class="mini-spinner"></div>
-            <p id="loader-text" style="color:white; margin-top:20px;">BrandIA está procesando...</p>
+            <div class="spin-icon"><i data-lucide="loader-2"></i></div>
+            <p id="loader-text">Procesando...</p>
         </div>
     </div>
 

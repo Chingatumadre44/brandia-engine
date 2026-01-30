@@ -1,10 +1,10 @@
 /**
- * BrandIA Engine v6.7 - Premium Onboarding UI + Structure Fix
+ * BrandIA Engine v6.8 - Critical Stabilization & Flow Fix
  */
 
 class BrandApp {
     constructor() {
-        console.log("Iniciando BrandIA Engine v6.5 (Layout Optimize)...");
+        console.log("🚀 Iniciando BrandIA Engine v6.8 [Stable Elite]...");
         this.appMain = document.getElementById('app-main');
         this.onboarding = document.getElementById('onboarding');
         this.btnStart = document.getElementById('btn-start');
@@ -106,7 +106,7 @@ class BrandApp {
                 `;
                 footer.appendChild(badge);
             }
-            badge.innerText = "v6.7 [Premium]";
+            badge.innerText = "v6.8 [Stable]";
             // Version incremented
         }
     }
@@ -215,26 +215,51 @@ class BrandApp {
     }
 
     handleOnboarding() {
-        const nameVal = document.getElementById('user-name-input').value;
-        const profVal = document.getElementById('user-prof-input').value;
+        console.log("Attempting Onboarding transition...");
+        const nameInput = document.getElementById('ob-user-name');
+        const profInput = document.getElementById('ob-user-prof');
 
-        if (!nameVal) { alert("Por favor ingresa tu nombre."); return; }
+        if (!nameInput || !profInput) {
+            console.error("Critical Error: Onboarding inputs not found in DOM");
+            return;
+        }
 
+        const nameVal = nameInput.value.trim();
+        const profVal = profInput.value.trim();
+
+        if (!nameVal) {
+            alert("Por favor ingresa tu nombre para continuar.");
+            return;
+        }
+
+        console.log(`User data captured: ${nameVal}, ${profVal}`);
         this.userData.name = nameVal;
         this.userData.profession = profVal;
 
-        this.greeting = `Hola ${nameVal}. Vamos a crear una identidad visual potente para tu negocio de ${profVal || 'branding'}.`;
+        this.greeting = `Hola ${nameVal}. Es un placer saludarte. He activado los núcleos neuronales de diseño para tu proyecto de ${profVal || 'Branding'}.`;
 
         const helloName = document.getElementById('hello-name');
         if (helloName) helloName.innerText = nameVal;
 
-        if (this.onboarding) this.onboarding.classList.add('hidden');
-        if (this.appMain) this.appMain.classList.remove('blur-content');
+        // Transition: Hide overlay, remove blur
+        console.log("Hiding onboarding overlay...");
+        if (this.onboarding) {
+            this.onboarding.style.display = 'none'; // Forced inline for safety
+            this.onboarding.classList.add('hidden');
+        }
+
+        console.log("Removing blur from app main...");
+        if (this.appMain) {
+            this.appMain.classList.remove('blur-content');
+            this.appMain.style.filter = 'none'; // Forced override
+            this.appMain.style.pointerEvents = 'auto'; // Re-enable interaction
+        }
 
         // Initial connection test
-        this.runSimulation("Conectando con Nucleo Neuronal Gemini...");
+        this.runSimulation("Sincronizando con Hub de Innovación BrandIA...");
         setTimeout(() => {
-            this.addMessage(this.greeting + " ¿Qué deseas transmitir hoy?", 'ai');
+            this.addMessage(this.greeting + " ¿Cómo visualizas tu marca en el futuro?", 'ai');
+            if (window.lucide) window.lucide.createIcons();
         }, 2200);
     }
 
