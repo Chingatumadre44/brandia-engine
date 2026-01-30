@@ -38,7 +38,7 @@ class BrandApp {
         document.title = "BrandIA v5.3 (Flash)"; // Visual confirm of update
 
         // --- CHANGE 1: Switched to Flash (Faster, less timeouts) ---
-        this.selectedModel = "gemini-1.5-flash";
+        this.selectedModel = "gemini-1.5-flash-latest";
         this.updateStatus(`IA Activa: ${this.selectedModel}`, "info");
 
         if (this.btnStart) this.btnStart.onclick = () => this.handleOnboarding();
