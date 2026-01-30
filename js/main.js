@@ -293,7 +293,9 @@ class BrandApp {
 
         } catch (finalError) {
             console.error("FATAL ERROR", finalError);
-            this.updateStatus("Error de Red. Click en ⚠️", "error");
+            this.updateStatus("Error Crítico", "error");
+            // Show tech error in chat for easier debugging
+            this.addMessage(`[SYSTEM ERROR] No pude conectar. Causa: ${finalError.message}. <br>Ejecuta el Diagnóstico (⚠️) para ver detalles.`, 'error');
             this.fallbackSimulation(prompt);
         }
     }
