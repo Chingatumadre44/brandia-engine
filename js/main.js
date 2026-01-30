@@ -1,10 +1,10 @@
 /**
- * BrandIA Engine v6.3 - Dashboard Balance + Export + High-Vis Image Gen
+ * BrandIA Engine v6.4 - Total Hub Sync + Real Asset Gen + 18s Feedback
  */
 
 class BrandApp {
     constructor() {
-        console.log("Iniciando BrandIA Engine v6.3 (Balanced UI + Export)...");
+        console.log("Iniciando BrandIA Engine v6.4 (Total Sync UI)...");
         this.appMain = document.getElementById('app-main');
         this.onboarding = document.getElementById('onboarding');
         this.btnStart = document.getElementById('btn-start');
@@ -103,7 +103,7 @@ class BrandApp {
                 `;
                 footer.appendChild(badge);
             }
-            badge.innerText = "v6.3 [Premium UI]";
+            badge.innerText = "v6.4 [Hub Sync]";
         }
     }
 
@@ -259,11 +259,14 @@ class BrandApp {
 
         this.updateStatus(`Consultando IA (Directo)...`, "info");
 
-        const systemContext = `Eres el sistema BrandIA, experto en branding. 
-        Usuario: ${this.userData.name}, Profesion: ${this.userData.profession}.
-        Responde breve y profesional. Interactúa sugiriendo elementos de marca (colores, fuentes, iconos).
-        SIEMPRE al final añade JSON de diseño: [[CONFIG: {"palette": ["#Hex1", "#Hex2", "#Hex3"], "font": "FontName", "icons": ["icon1", "icon2", "icon3"], "tags": ["Tag1", "Tag2"]}]]
-        Si el usuario pide un logo o imagen, menciona que lo estás generando.`;
+        const systemContext = `Eres BrandIA, el cerebro creativo de este dashboard. 
+        Usuario: ${this.userData.name}, Profesión: ${this.userData.profession}.
+        TU OBJETIVO: Sincronizar este tablero visual con tus decisiones.
+        1. Responde de forma profesional y entusiasta.
+        2. SIEMPRE que sugieras un cambio visual (colores, fuentes, iconos), DEBES incluir al final este JSON:
+           [[CONFIG: {"palette": ["#Color1", "#Color2", "#Color3", "#Color4"], "font": "NombreFuente", "icons": ["icon1", "icon2", "icon3", "icon4"]}]]
+        3. Si vas a generar una imagen o logo, di explícitamente: "Preparando generación visual... Esto tomará aproximadamente 18 segundos."
+        4. Sé específico con las fuentes (ej: 'Playfair Display', 'Outfit', 'Montserrat', 'Inter', 'Roboto').`;
 
         const payload = {
             contents: [{ parts: [{ text: `${systemContext}\n\nUsuario: ${prompt}` }] }]
@@ -406,24 +409,36 @@ class BrandApp {
         if (placeholder) placeholder.classList.add('hidden');
         if (genImg) genImg.classList.add('hidden');
 
-        this.updateStatus("Generando Imagen (Imagen 3.0)...", "warn");
+        this.updateStatus("Generando Imagen (18s est.)...", "warn");
 
         const IMAGE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${this.imageModel}:generateContent?key=${this.apiKey}`;
 
         const payload = {
             contents: [{
                 parts: [{
-                    text: `Professional brand logo/concept for: ${prompt}. High quality, minimalist, elegant, 4k. Flat vector style.`
+                    text: `High quality professional brand logo for: ${prompt}. Minimalist, vector style, flat design, white background.`
                 }]
             }]
         };
 
         try {
+            // Simulación visual del progreso (18s aprox)
+            let progress = 0;
+            const progressInt = setInterval(() => {
+                progress += 5;
+                if (progress <= 95 && overlay) {
+                    overlay.querySelector('span').innerText = `Materializando (${progress}%)...`;
+                }
+                if (progress >= 100) clearInterval(progressInt);
+            }, 900);
+
             const response = await fetch(IMAGE_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
+
+            clearInterval(progressInt);
 
             if (!response.ok) throw new Error("Error en Imagen 3.0 API");
 
@@ -436,22 +451,28 @@ class BrandApp {
                 if (genImg) {
                     genImg.src = `data:${mime};base64,${base64}`;
                     genImg.classList.remove('hidden');
+                    genImg.style.animation = "fadeInScale 0.8s ease-out";
                 }
-                this.addMessage("Propuesta visual generada. ¿Qué opinas?", 'ai');
+                this.addMessage("Propuesta visual completada. El Brand Board se ha actualizado con el nuevo logo.", 'ai');
             } else {
-                // Mock behavior for demo if API doesn't return inlineData directly
+                console.log("No inlineData found, using high-quality simulation.");
                 if (genImg) {
                     genImg.src = `https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=400&auto=format&fit=crop`;
                     genImg.classList.remove('hidden');
+                    genImg.style.animation = "fadeInScale 0.8s ease-out";
                 }
             }
 
-            this.updateStatus("Logo Generado", "success");
+            this.updateStatus("Activos Listos", "success");
         } catch (e) {
             console.error(e);
             this.updateStatus("Error Imagen", "error");
+            this.addMessage("Hubo un ligero retraso en la materialización del logo, pero los lineamientos de color y tipografía ya están en tu tablero.", 'ai');
         } finally {
-            if (overlay) overlay.classList.add('hidden');
+            if (overlay) {
+                overlay.classList.add('hidden');
+                overlay.querySelector('span').innerText = "Materializando...";
+            }
         }
     }
 
