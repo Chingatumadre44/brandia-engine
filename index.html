@@ -4,18 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BrandIA Engine v6.6 [Fix Start]</title>
-    <!-- Last Sync: 2026-01-30 16:41 -->
+    <title>BrandIA Engine v6.7 [Premium]</title>
+    <!-- Last Sync: 2026-01-30 16:51 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Outfit:wght@300;400;600;800&family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Outfit:wght@300;400;600;800&family=Playfair+Display:wght@700&family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <!-- Capa de Onboarding Premium (Glassmorphism) -->
+    <div id="onboarding" class="onboarding-overlay">
+        <div class="onboarding-bg-glow"></div>
+        <div class="onboarding-card">
+            <div class="onboarding-header">
+                <div class="brand-presence">
+                    <i data-lucide="sparkles" class="brand-sparkle pulse"></i>
+                    <span class="logo-text">BrandIA v6.7</span>
+                </div>
+                <h2>Diseñemos tu futuro</h2>
+                <p>Personaliza tu experiencia de marca en segundos.</p>
+            </div>
+            <div class="onboarding-form">
+                <div class="input-group-premium">
+                    <label for="user-name-input">¿Cómo debemos llamarte?</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="user" class="input-icon"></i>
+                        <input type="text" id="user-name-input" placeholder="Ingresa tu nombre">
+                    </div>
+                </div>
+                <div class="input-group-premium">
+                    <label for="user-prof-input">Tu profesión o industria</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="briefcase" class="input-icon"></i>
+                        <input type="text" id="user-prof-input" placeholder="Ej: Médico, Arquitecto, Tech...">
+                    </div>
+                </div>
+                <button id="btn-start" class="btn-primary-mega">
+                    <span>Empezar Transformación</span>
+                    <i data-lucide="arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
     <div class="app-container blur-content" id="app-main">
         <aside class="sidebar">
             <div class="brand-logo">
@@ -32,32 +68,11 @@
                 </a>
             </nav>
             <div id="sidebar-footer" class="sidebar-footer">
-                <!-- El badge de versión se inyectará aquí -->
+                <!-- Se inyecta v6.7 Premium -->
             </div>
         </aside>
 
-        <div id="onboarding" class="onboarding-overlay">
-            <div class="onboarding-card">
-                <div class="onboarding-header">
-                    <i data-lucide="sparkles" class="brand-sparkle"></i>
-                    <h2>Bienvenido a BrandIA v6.6</h2>
-                    <p>Configura tu perfil para empezar a diseñar tu identidad.</p>
-                </div>
-                <div class="onboarding-form">
-                    <div class="input-group-v2">
-                        <label>¿Cómo te llamas?</label>
-                        <input type="text" id="user-name-input" placeholder="Tu nombre...">
-                    </div>
-                    <div class="input-group-v2">
-                        <label>¿Qué profesión o negocio tienes?</label>
-                        <input type="text" id="user-prof-input" placeholder="Ej: Abogado, Clínica, Freelance...">
-                    </div>
-                    <button id="btn-start" class="btn-primary-large">Comenzar Análisis</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="app-container" id="app-main">
+        <main class="main-content">
             <header class="top-bar">
                 <div class="search-container">
                     <i data-lucide="search"></i>
@@ -99,7 +114,7 @@
                             </div>
                         </div>
 
-                        <!-- Subida de Logo (Ahora justo debajo del chat para evitar scroll) -->
+                        <!-- Subida de Logo (Acción Rápida) -->
                         <div class="board-card upload-section-v2">
                             <div class="upload-header">
                                 <i data-lucide="upload-cloud"></i>
@@ -138,7 +153,7 @@
                                 <div class="logo-display">
                                     <div class="logo-box current">
                                         <span class="label">ACTUAL</span>
-                                        <div class="logo-display">
+                                        <div class="logo-display-inner">
                                             <img id="logo-actual-display" src="" alt="" class="hidden">
                                             <div id="logo-empty-state" class="empty-logo-msg">
                                                 <i data-lucide="image"></i>
@@ -147,7 +162,7 @@
                                         </div>
                                     </div>
                                     <div class="logo-box generated" id="logo-gen-container">
-                                        <span>Propuesta IA</span>
+                                        <span class="label">PROPUESTA IA</span>
                                         <div class="gen-status-overlay hidden" id="gen-status-overlay">
                                             <div class="mini-spinner"></div>
                                             <span>Materializando...</span>
@@ -159,81 +174,49 @@
                             </div>
 
                             <!-- Colors Section -->
-                            <div class="board-card colors-section">
-                                <div class="card-label">Colores</div>
-                                <div class="colors-grid" id="suggested-colors">
-                                    <!-- Dynamic colors -->
+                            <div class="board-card color-section">
+                                <div class="card-label">Paleta de Colores</div>
+                                <div class="color-palette" id="color-palette">
+                                    <!-- Dinámico -->
+                                    <div class="color-swatch-empty"></div>
+                                    <div class="color-swatch-empty"></div>
+                                    <div class="color-swatch-empty"></div>
+                                    <div class="color-swatch-empty"></div>
                                 </div>
                             </div>
 
                             <!-- Typography Section -->
-                            <div class="board-card typo-section">
+                            <div class="board-card font-section">
                                 <div class="card-label">Tipografía</div>
-                                <div class="typo-preview" id="typo-preview">
-                                    <h1 id="font-specimen">Aa</h1>
-                                    <p id="suggested-font-name">Outfit Bold</p>
+                                <div class="font-preview">
+                                    <h4 id="font-heading-name">Montserrat</h4>
+                                    <p id="font-preview-text" style="font-family: 'Space Mono', monospace;">
+                                        ABCDEFGHIJKLMN abcdefghijklmn</p>
                                 </div>
                             </div>
 
                             <!-- Icons Section -->
-                            <div class="board-card icons-section">
-                                <div class="card-label">Iconos</div>
-                                <div class="icons-grid" id="suggested-icons">
-                                    <!-- Dynamic icons -->
+                            <div class="board-card icon-section">
+                                <div class="card-label">Iconografía Sugerida</div>
+                                <div class="icon-grid" id="icon-grid">
+                                    <div class="icon-swatch-empty"></div>
+                                    <div class="icon-swatch-empty"></div>
+                                    <div class="icon-swatch-empty"></div>
+                                    <div class="icon-swatch-empty"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-        </div>
-        <input type="file" id="file-input" hidden accept="image/*">
-    </div>
-    <div class="no-logo-action">
-        <button id="no-logo-btn" class="link-btn">La IA puede crear uno por ti</button>
-    </div>
-    </div>
-    </div>
-    </div>
-    </section>
-    </main>
+            </section>
+        </main>
     </div>
 
-    <!-- Onboarding Step -->
-    <div id="onboarding" class="overlay">
-        <div class="onboarding-card">
-            <div class="onboarding-header">
-                <i data-lucide="sparkles" class="ai-burst"></i>
-                <h2>Bienvenido a BrandIA</h2>
-                <p>Personalicemos tu experiencia para que la IA aprenda de ti.</p>
-            </div>
-            <div class="onboarding-body">
-                <div class="input-group">
-                    <label>¿Cómo te llamas?</label>
-                    <input type="text" id="ob-name" placeholder="Ej. Ana Teniente">
-                </div>
-                <div class="input-group">
-                    <label>¿A qué te dedicas?</label>
-                    <select id="ob-profession">
-                        <option value="doctor">Medicina / Salud</option>
-                        <option value="architect">Arquitectura / Diseño</option>
-                        <option value="tech">Tecnología / Software</option>
-                        <option value="personal">Marca Personal / Coaching</option>
-                        <option value="lawyer">Leyes / Consultoría</option>
-                    </select>
-                </div>
-                <button class="btn-primary full-width" id="btn-start" type="button">
-                    Comenzar Análisis 🚀
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Loader -->
-    <div id="loader" class="overlay hidden">
+    <!-- Loader General -->
+    <div id="loader" class="onboarding-overlay hidden">
         <div class="loader-content">
-            <div class="spinner"></div>
-            <p id="loader-text">BrandIA está procesando...</p>
+            <div class="mini-spinner"></div>
+            <p id="loader-text" style="color:white; margin-top:20px;">BrandIA está procesando...</p>
         </div>
     </div>
 

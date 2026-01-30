@@ -1,5 +1,5 @@
 /**
- * BrandIA Engine v6.6 - Start Button Fix + Onboarding Restore
+ * BrandIA Engine v6.7 - Premium Onboarding UI + Structure Fix
  */
 
 class BrandApp {
@@ -106,7 +106,7 @@ class BrandApp {
                 `;
                 footer.appendChild(badge);
             }
-            badge.innerText = "v6.6 [Fix Start]";
+            badge.innerText = "v6.7 [Premium]";
             // Version incremented
         }
     }
