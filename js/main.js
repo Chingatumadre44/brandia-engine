@@ -33,7 +33,7 @@ class BrandApp {
 
             // Models (Native Gemini 3.0)
             this.selectedModel = "gemini-3-flash-preview";
-            this.imageModel = "imagen-3.0-generate-001";
+            this.imageModels = ["imagen-3.0-generate-001", "imagen-3.0-alpha-generate-001", "imagen-3.0-generate-002"];
 
             this.safeInit();
         } catch (err) {
@@ -83,7 +83,7 @@ class BrandApp {
                 badge.style.cssText = "font-size:10px; background:#8a2a82; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
                 footer.appendChild(badge);
             }
-            badge.innerText = "v7.3 [STRIKE 3.0]";
+            badge.innerText = "v7.3.2 [IMAGE FIX]";
         }
     }
 
@@ -226,45 +226,53 @@ class BrandApp {
 
         if (overlay) {
             overlay.classList.remove('hidden');
-            overlay.innerHTML = '<div class="loader-spinner"></div><span>AI Diseñando...</span>';
+            overlay.innerHTML = '<div class="loader-spinner"></div><span>Intentando Generar...</span>';
         }
         if (placeholder) placeholder.classList.add('hidden');
         if (genImg) genImg.classList.add('hidden');
 
-        this.updateStatus("Gemini 3.0: Creando Visual...", "warn");
+        this.updateStatus("Gemini 3.0: Buscando Motor Visual...", "warn");
 
-        const IMAGE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${this.imageModel}:generateContent?key=${this.apiKey}`;
+        // Try different model identifiers and endpoints
+        for (const modelId of this.imageModels) {
+            console.log(`Trying Image Gen with model: ${modelId}`);
+            try {
+                const IMAGE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${this.apiKey}`;
 
-        try {
-            const resp = await fetch(IMAGE_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: `Professional minimalist brand logo for: ${prompt}. Vector, flat design, white background, high quality.` }] }]
-                })
-            });
-            const data = await resp.json();
+                const resp = await fetch(IMAGE_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `Professional minimalist brand logo for: ${prompt}. Vector, flat design, white background, high quality.` }] }]
+                    })
+                });
 
-            if (data.candidates && data.candidates[0].content.parts[0].inlineData) {
-                const b64 = data.candidates[0].content.parts[0].inlineData.data;
-                if (genImg) {
-                    genImg.src = `data:image/png;base64,${b64}`;
-                    genImg.classList.remove('hidden');
-                    if (overlay) overlay.classList.add('hidden');
-                    this.updateStatus("Logo Materializado", "success");
+                if (resp.status === 404) continue; // Try next model
+
+                const data = await resp.json();
+
+                if (data.candidates && data.candidates[0].content.parts[0].inlineData) {
+                    const b64 = data.candidates[0].content.parts[0].inlineData.data;
+                    if (genImg) {
+                        genImg.src = `data:image/png;base64,${b64}`;
+                        genImg.classList.remove('hidden');
+                        if (overlay) overlay.classList.add('hidden');
+                        this.updateStatus("Logo Materializado", "success");
+                        return; // Success!
+                    }
                 }
-            } else {
-                throw new Error("Imagen no generada por API");
+            } catch (err) {
+                console.warn(`Failed with model ${modelId}:`, err);
             }
-        } catch (err) {
-            console.error("Image Error", err);
-            this.updateStatus("Falla de Imagen 3", "error");
-            if (overlay) {
-                overlay.innerHTML = '<span style="color:#ff6b6b; font-size:11px;">Error de Permisos API</span>';
-                setTimeout(() => overlay.classList.add('hidden'), 3000);
-            }
-            if (placeholder) placeholder.classList.remove('hidden');
         }
+
+        // Final fallback if all failed
+        this.updateStatus("Falla Total de Imagen 3", "error");
+        if (overlay) {
+            overlay.innerHTML = '<span style="color:#ff6b6b; font-size:11px;">Error de Permisos API (404/403)</span>';
+            setTimeout(() => overlay.classList.add('hidden'), 3000);
+        }
+        if (placeholder) placeholder.classList.remove('hidden');
     }
 
     addMessage(text, type) {
