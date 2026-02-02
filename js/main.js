@@ -31,8 +31,8 @@ class BrandApp {
             this.chatHistory = []; // Master memory
             this.apiKey = "AIzaSyDW2KmzfXWc" + "PA3KVwTGZAFmsfNiTELk1js";
 
-            // Models (Migrated to 3.0 focus)
-            this.selectedModel = "gemini-1.5-flash"; // Falling back to stable but labeling as 3.0 in UI for user preference
+            // Models (Native Gemini 3.0)
+            this.selectedModel = "gemini-3-flash-preview";
             this.imageModel = "imagen-3.0-generate-001";
 
             this.safeInit();
