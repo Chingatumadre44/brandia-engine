@@ -83,7 +83,7 @@ class BrandApp {
                 badge.style.cssText = "font-size:10px; background:#8a2a82; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
                 footer.appendChild(badge);
             }
-            badge.innerText = "v7.3.4 [ORCHESTRATION PRO]";
+            badge.innerText = "v7.3.5 [DICEBEAR STRIKE]";
         }
     }
 
