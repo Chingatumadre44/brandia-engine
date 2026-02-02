@@ -31,9 +31,9 @@ class BrandApp {
             this.chatHistory = []; // Master memory
             this.apiKey = "AIzaSyDW2KmzfXWc" + "PA3KVwTGZAFmsfNiTELk1js";
 
-            // Models (Native Gemini 3.0)
-            this.selectedModel = "gemini-3-flash-preview";
-            this.imageModels = ["imagen-3.0-generate-001", "imagen-3.0-alpha-generate-001", "imagen-3.0-generate-002"];
+            // Models (Native Gemini 3.0 Pro + Designer Strike)
+            this.selectedModel = "gemini-3-pro-preview";
+            this.imageModels = ["imagen-3.0-generate-001", "imagen-3.0-generate-002", "imagen-3.0-alpha-generate-001"];
 
             this.safeInit();
         } catch (err) {
@@ -83,7 +83,7 @@ class BrandApp {
                 badge.style.cssText = "font-size:10px; background:#8a2a82; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
                 footer.appendChild(badge);
             }
-            badge.innerText = "v7.3.2 [IMAGE FIX]";
+            badge.innerText = "v7.3.3 [ORCHESTRATION 3.0]";
         }
     }
 
@@ -226,50 +226,59 @@ class BrandApp {
 
         if (overlay) {
             overlay.classList.remove('hidden');
-            overlay.innerHTML = '<div class="loader-spinner"></div><span>Intentando Generar...</span>';
+            overlay.innerHTML = '<div class="loader-spinner"></div><span>Sincronizando IAs...</span>';
         }
         if (placeholder) placeholder.classList.add('hidden');
         if (genImg) genImg.classList.add('hidden');
 
-        this.updateStatus("Gemini 3.0: Buscando Motor Visual...", "warn");
+        this.updateStatus("Strike 3.0: Buscando Motor...", "warn");
 
-        // Try different model identifiers and endpoints
         for (const modelId of this.imageModels) {
-            console.log(`Trying Image Gen with model: ${modelId}`);
-            try {
-                const IMAGE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${this.apiKey}`;
+            // Try TWO methods per model: generateContent and predict
+            const methods = [
+                { name: 'generateContent', payload: { contents: [{ parts: [{ text: `Professional minimalist brand logo for: ${prompt}. Vector, flat design, white background.` }] }] } },
+                { name: 'predict', payload: { instances: [{ prompt: `Professional minimalist brand logo for: ${prompt}. Vector, flat design, white background.` }], parameters: { sampleCount: 1 } } }
+            ];
 
-                const resp = await fetch(IMAGE_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: `Professional minimalist brand logo for: ${prompt}. Vector, flat design, white background, high quality.` }] }]
-                    })
-                });
+            for (const method of methods) {
+                console.log(`Trying ${modelId} with method ${method.name}`);
+                try {
+                    const URL = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:${method.name}?key=${this.apiKey}`;
 
-                if (resp.status === 404) continue; // Try next model
+                    const resp = await fetch(URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(method.payload)
+                    });
 
-                const data = await resp.json();
+                    if (resp.status === 404 || resp.status === 403) continue;
 
-                if (data.candidates && data.candidates[0].content.parts[0].inlineData) {
-                    const b64 = data.candidates[0].content.parts[0].inlineData.data;
-                    if (genImg) {
-                        genImg.src = `data:image/png;base64,${b64}`;
-                        genImg.classList.remove('hidden');
-                        if (overlay) overlay.classList.add('hidden');
-                        this.updateStatus("Logo Materializado", "success");
-                        return; // Success!
+                    const data = await resp.json();
+
+                    // Specific response handling for each method
+                    let b64 = null;
+                    if (method.name === 'generateContent' && data.candidates?.[0]?.content?.parts?.[0]?.inlineData) {
+                        b64 = data.candidates[0].content.parts[0].inlineData.data;
+                    } else if (method.name === 'predict' && data.predictions?.[0]?.bytesBase64Encoded) {
+                        b64 = data.predictions[0].bytesBase64Encoded;
                     }
-                }
-            } catch (err) {
-                console.warn(`Failed with model ${modelId}:`, err);
+
+                    if (b64) {
+                        if (genImg) {
+                            genImg.src = `data:image/png;base64,${b64}`;
+                            genImg.classList.remove('hidden');
+                            if (overlay) overlay.classList.add('hidden');
+                            this.updateStatus("IA Dual Sincronizada", "success");
+                            return;
+                        }
+                    }
+                } catch (err) { console.warn(`Error on ${modelId} - ${method.name}:`, err); }
             }
         }
 
-        // Final fallback if all failed
-        this.updateStatus("Falla Total de Imagen 3", "error");
+        this.updateStatus("Falla de Orquestación", "error");
         if (overlay) {
-            overlay.innerHTML = '<span style="color:#ff6b6b; font-size:11px;">Error de Permisos API (404/403)</span>';
+            overlay.innerHTML = '<span style="color:#ff6b6b; font-size:11px;">Error de Handshake (API)</span>';
             setTimeout(() => overlay.classList.add('hidden'), 3000);
         }
         if (placeholder) placeholder.classList.remove('hidden');
