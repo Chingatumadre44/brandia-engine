@@ -459,6 +459,26 @@ body {
     margin-top: 1rem;
 }
 
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: 'Outfit', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    height: 100vh;
+    /* Fixed height for body */
+    overflow-y: hidden;
+    /* Prevent body scroll */
+}
+
+#app-main {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
 .icon-grid {
     display: flex;
     gap: 15px;
@@ -475,17 +495,29 @@ body {
     margin-top: 2rem;
 }
 
-/* Sidebar */
+/* Sidebar Fix */
 .sidebar {
-    width: 260px;
-    background: white;
-    padding: 30px 0;
+    width: 280px;
+    background: var(--sidebar-bg);
+    padding: 30px;
     display: flex;
     flex-direction: column;
-    border-right: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    height: 100vh;
+    justify-content: space-between;
+    height: 100%;
+    flex-shrink: 0;
+    overflow-y: auto;
+    /* Allow sidebar to scroll independently if needed */
+}
+
+/* Main Content Fix */
+.main-content {
+    flex: 1;
+    padding: 30px 40px;
+    overflow-y: auto;
+    /* This is the ONLY main scrollbar */
+    height: 100%;
+    position: relative;
+    background: var(--bg-main);
 }
 
 .sidebar-nav {

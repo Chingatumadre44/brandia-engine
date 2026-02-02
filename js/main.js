@@ -196,22 +196,41 @@ class BrandApp {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: contents })
             });
+
+            if (!resp.ok) throw new Error(`API HTTP Error: ${resp.status}`);
+
             const data = await resp.json();
 
             if (data.candidates && data.candidates[0].content) {
                 const aiText = data.candidates[0].content.parts[0].text;
 
+                // Robust JSON Extraction
+                let matrixData = null;
                 if (aiText.includes("[[MATRIX:")) {
-                    const match = aiText.match(/\[\[MATRIX: (.*?)\]\]/);
-                    if (match) this.handleMatrixData(JSON.parse(match[1]));
+                    try {
+                        // Extract just the JSON object within the tag
+                        const match = aiText.match(/\[\[MATRIX:\s*(\{.*?\})\s*\]\]/s);
+                        if (match && match[1]) {
+                            // Clean potential markdown or extra chars
+                            const jsonStr = match[1].replace(/```json/g, '').replace(/```/g, '');
+                            matrixData = JSON.parse(jsonStr);
+                            this.handleMatrixData(matrixData);
+                        }
+                    } catch (e) {
+                        console.error("Matrix Parse Error:", e);
+                        this.addMessage("⚠️ Error procesando la matriz visual. Reintentando...", 'error');
+                        // Optional: Retry logic could be here
+                    }
                 }
 
                 this.handleAIResponseText(aiText);
-                this.updateStatus("Matriz Materializada", "success");
+                if (matrixData) this.updateStatus("Matriz Materializada", "success");
+                else this.updateStatus("Respuesta Recibida", "success");
             }
         } catch (err) {
             console.error("API Error Matrix:", err);
-            this.addMessage("[ERROR] Sincronización fallida.", 'ai');
+            this.addMessage("[ERROR] Conexión inestable con el núcleo creativo.", 'error');
+            this.updateStatus("Error de Sincronización", "error");
         }
     }
 
