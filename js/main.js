@@ -33,7 +33,7 @@ class BrandApp {
 
             // Models (Native Gemini 3.0 Pro + Designer Strike)
             this.selectedModel = "gemini-3-pro-preview";
-            this.imageModels = ["imagen-3.0-generate-001", "imagen-3.0-generate-002", "imagen-3.0-alpha-generate-001"];
+            this.imageModels = ["imagen-3.0-fast-generate", "imagen-3.0-generate-001", "imagen-3.0-generate-002"];
 
             this.safeInit();
         } catch (err) {
@@ -83,7 +83,7 @@ class BrandApp {
                 badge.style.cssText = "font-size:10px; background:#8a2a82; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
                 footer.appendChild(badge);
             }
-            badge.innerText = "v7.3.3 [ORCHESTRATION 3.0]";
+            badge.innerText = "v7.3.4 [ORCHESTRATION PRO]";
         }
     }
 
@@ -233,46 +233,49 @@ class BrandApp {
 
         this.updateStatus("Strike 3.0: Buscando Motor...", "warn");
 
+        const versions = ['v1beta', 'v1'];
+
         for (const modelId of this.imageModels) {
-            // Try TWO methods per model: generateContent and predict
-            const methods = [
-                { name: 'generateContent', payload: { contents: [{ parts: [{ text: `Professional minimalist brand logo for: ${prompt}. Vector, flat design, white background.` }] }] } },
-                { name: 'predict', payload: { instances: [{ prompt: `Professional minimalist brand logo for: ${prompt}. Vector, flat design, white background.` }], parameters: { sampleCount: 1 } } }
-            ];
+            for (const v of versions) {
+                // Try TWO methods per model: generateContent and predict
+                const methods = [
+                    { name: 'generateContent', payload: { contents: [{ parts: [{ text: `Professional minimalist brand logo for: ${prompt}. Vector, flat design, white background.` }] }] } },
+                    { name: 'predict', payload: { instances: [{ prompt: `Professional minimalist brand logo for: ${prompt}. Vector, flat design, white background.` }], parameters: { sampleCount: 1 } } }
+                ];
 
-            for (const method of methods) {
-                console.log(`Trying ${modelId} with method ${method.name}`);
-                try {
-                    const URL = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:${method.name}?key=${this.apiKey}`;
+                for (const method of methods) {
+                    console.log(`Trying ${modelId} (${v}) with method ${method.name}`);
+                    try {
+                        const URL = `https://generativelanguage.googleapis.com/${v}/models/${modelId}:${method.name}?key=${this.apiKey}`;
 
-                    const resp = await fetch(URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(method.payload)
-                    });
+                        const resp = await fetch(URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(method.payload)
+                        });
 
-                    if (resp.status === 404 || resp.status === 403) continue;
+                        if (resp.status === 404 || resp.status === 403) continue;
 
-                    const data = await resp.json();
+                        const data = await resp.json();
 
-                    // Specific response handling for each method
-                    let b64 = null;
-                    if (method.name === 'generateContent' && data.candidates?.[0]?.content?.parts?.[0]?.inlineData) {
-                        b64 = data.candidates[0].content.parts[0].inlineData.data;
-                    } else if (method.name === 'predict' && data.predictions?.[0]?.bytesBase64Encoded) {
-                        b64 = data.predictions[0].bytesBase64Encoded;
-                    }
-
-                    if (b64) {
-                        if (genImg) {
-                            genImg.src = `data:image/png;base64,${b64}`;
-                            genImg.classList.remove('hidden');
-                            if (overlay) overlay.classList.add('hidden');
-                            this.updateStatus("IA Dual Sincronizada", "success");
-                            return;
+                        let b64 = null;
+                        if (data.candidates?.[0]?.content?.parts?.[0]?.inlineData) {
+                            b64 = data.candidates[0].content.parts[0].inlineData.data;
+                        } else if (data.predictions?.[0]?.bytesBase64Encoded) {
+                            b64 = data.predictions[0].bytesBase64Encoded;
                         }
-                    }
-                } catch (err) { console.warn(`Error on ${modelId} - ${method.name}:`, err); }
+
+                        if (b64) {
+                            if (genImg) {
+                                genImg.src = `data:image/png;base64,${b64}`;
+                                genImg.classList.remove('hidden');
+                                if (overlay) overlay.classList.add('hidden');
+                                this.updateStatus("IA Dual Sincronizada", "success");
+                                return;
+                            }
+                        }
+                    } catch (err) { console.warn(`Error on ${modelId} - ${method.name}:`, err); }
+                }
             }
         }
 
