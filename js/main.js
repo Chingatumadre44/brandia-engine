@@ -31,9 +31,9 @@ class BrandApp {
             this.chatHistory = []; // Master memory
             this.apiKey = "AIzaSyDW2KmzfXWc" + "PA3KVwTGZAFmsfNiTELk1js";
 
-            // Models (Native Gemini 3.0 Pro + Designer Strike)
+            // Models (Creative Director Gemini 3.0 Pro + DiceBear Designer)
             this.selectedModel = "gemini-3-pro-preview";
-            this.imageModels = ["imagen-3.0-fast-generate", "imagen-3.0-generate-001", "imagen-3.0-generate-002"];
+            this.visualEngine = "dicebear";
 
             this.safeInit();
         } catch (err) {
@@ -226,65 +226,38 @@ class BrandApp {
 
         if (overlay) {
             overlay.classList.remove('hidden');
-            overlay.innerHTML = '<div class="loader-spinner"></div><span>Sincronizando IAs...</span>';
+            overlay.innerHTML = '<div class="loader-spinner"></div><span>BrandIA Diseñando...</span>';
         }
         if (placeholder) placeholder.classList.add('hidden');
         if (genImg) genImg.classList.add('hidden');
 
-        this.updateStatus("Strike 3.0: Buscando Motor...", "warn");
+        this.updateStatus("DiceBear: Creando Logo...", "warn");
 
-        const versions = ['v1beta', 'v1'];
+        try {
+            // Use 'shapes' for professional brands, 'initials' for personal
+            let style = "shapes";
+            let seed = prompt.replace(/\s+/g, '-').toLowerCase() + "-" + Math.random().toString(36).substring(7);
 
-        for (const modelId of this.imageModels) {
-            for (const v of versions) {
-                // Try TWO methods per model: generateContent and predict
-                const methods = [
-                    { name: 'generateContent', payload: { contents: [{ parts: [{ text: `Professional minimalist brand logo for: ${prompt}. Vector, flat design, white background.` }] }] } },
-                    { name: 'predict', payload: { instances: [{ prompt: `Professional minimalist brand logo for: ${prompt}. Vector, flat design, white background.` }], parameters: { sampleCount: 1 } } }
-                ];
-
-                for (const method of methods) {
-                    console.log(`Trying ${modelId} (${v}) with method ${method.name}`);
-                    try {
-                        const URL = `https://generativelanguage.googleapis.com/${v}/models/${modelId}:${method.name}?key=${this.apiKey}`;
-
-                        const resp = await fetch(URL, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(method.payload)
-                        });
-
-                        if (resp.status === 404 || resp.status === 403) continue;
-
-                        const data = await resp.json();
-
-                        let b64 = null;
-                        if (data.candidates?.[0]?.content?.parts?.[0]?.inlineData) {
-                            b64 = data.candidates[0].content.parts[0].inlineData.data;
-                        } else if (data.predictions?.[0]?.bytesBase64Encoded) {
-                            b64 = data.predictions[0].bytesBase64Encoded;
-                        }
-
-                        if (b64) {
-                            if (genImg) {
-                                genImg.src = `data:image/png;base64,${b64}`;
-                                genImg.classList.remove('hidden');
-                                if (overlay) overlay.classList.add('hidden');
-                                this.updateStatus("IA Dual Sincronizada", "success");
-                                return;
-                            }
-                        }
-                    } catch (err) { console.warn(`Error on ${modelId} - ${method.name}:`, err); }
-                }
+            if (prompt.toLowerCase().includes("inicial") || prompt.toLowerCase().includes("nombre") || prompt.length < 10) {
+                style = "initials";
             }
-        }
 
-        this.updateStatus("Falla de Orquestación", "error");
-        if (overlay) {
-            overlay.innerHTML = '<span style="color:#ff6b6b; font-size:11px;">Error de Handshake (API)</span>';
-            setTimeout(() => overlay.classList.add('hidden'), 3000);
+            const DICEBEAR_URL = `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(seed)}&backgroundColor=ffffff&backgroundType=solid`;
+
+            if (genImg) {
+                genImg.src = DICEBEAR_URL;
+                genImg.onload = () => {
+                    genImg.classList.remove('hidden');
+                    if (overlay) overlay.classList.add('hidden');
+                    this.updateStatus("Logo Materializado", "success");
+                };
+            }
+        } catch (err) {
+            console.error("Visual Error", err);
+            this.updateStatus("Falla Visual", "error");
+            if (overlay) overlay.classList.add('hidden');
+            if (placeholder) placeholder.classList.remove('hidden');
         }
-        if (placeholder) placeholder.classList.remove('hidden');
     }
 
     addMessage(text, type) {
