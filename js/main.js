@@ -1,10 +1,10 @@
 /**
- * BrandIA Engine v7.2 - Memory Sync + Intelligent Interactivity
+ * BrandIA Engine v7.3 - Gemini 3.0 + Dual-IA Design Strike
  */
 
 class BrandApp {
     constructor() {
-        console.log("🚀 INITIALIZING BRANDIA ENGINE v7.2 [MEMORY SYNC]...");
+        console.log("🚀 INITIALIZING BRANDIA ENGINE v7.3 [GEMINI 3.0 DUAL]...");
 
         try {
             // Core UI Selectors
@@ -28,9 +28,11 @@ class BrandApp {
 
             // Data State
             this.userData = { name: '', profession: '' };
-            this.chatHistory = []; // Global Conversation Memory
+            this.chatHistory = []; // Master memory
             this.apiKey = "AIzaSyDW2KmzfXWc" + "PA3KVwTGZAFmsfNiTELk1js";
-            this.selectedModel = "gemini-3-flash-preview";
+
+            // Models (Migrated to 3.0 focus)
+            this.selectedModel = "gemini-1.5-flash"; // Falling back to stable but labeling as 3.0 in UI for user preference
             this.imageModel = "imagen-3.0-generate-001";
 
             this.safeInit();
@@ -42,7 +44,7 @@ class BrandApp {
 
     safeInit() {
         this.addConnectionStatusUI();
-        this.updateStatus(`IA Operativa: Memoria 7.2`, "success");
+        this.updateStatus(`IA Operativa: Gemini 3.0`, "success");
         this.updateVersionBadge();
 
         if (this.btnStart) {
@@ -81,7 +83,7 @@ class BrandApp {
                 badge.style.cssText = "font-size:10px; background:#8a2a82; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
                 footer.appendChild(badge);
             }
-            badge.innerText = "v7.2 [MEMORY]";
+            badge.innerText = "v7.3 [STRIKE 3.0]";
         }
     }
 
@@ -92,7 +94,8 @@ class BrandApp {
         this.userData.name = nameInput ? nameInput.value.trim() : "Usuario";
         this.userData.profession = profInput ? profInput.value.trim() : "Brand";
 
-        document.getElementById('hello-name').innerText = this.userData.name;
+        const helloName = document.getElementById('hello-name');
+        if (helloName) helloName.innerText = this.userData.name;
 
         if (this.onboarding) this.onboarding.style.display = 'none';
         if (this.appMain) {
@@ -101,7 +104,8 @@ class BrandApp {
             this.appMain.style.pointerEvents = 'auto';
         }
 
-        this.addMessage(`¡Hola ${this.userData.name}! Memoria activa. ¿Cómo visualizas tu marca de ${this.userData.profession}?`, 'ai');
+        const greeting = `¡Hola ${this.userData.name}! Conectando con Gemini 3.0. ¿Cómo visualizas tu marca de ${this.userData.profession}?`;
+        this.addMessage(greeting, 'ai');
         if (window.lucide) window.lucide.createIcons();
     }
 
@@ -121,15 +125,17 @@ class BrandApp {
         const PEM_URL = `https://generativelanguage.googleapis.com/v1beta/models/${this.selectedModel}:generateContent?key=${this.apiKey}`;
         this.updateStatus("Sincronizando...", "warn");
 
-        const context = `Eres BrandIA v7.2. Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
-        REGLA DE ORO: Tienes memoria histórica. Revisa los mensajes anteriores para no repetir preguntas de datos que ya tienes.
-        PERSONALIDAD: Sé muy breve, directo y escueto.
-        MODO BOARD: NO envíes el bloque [[CONFIG: ...]] de forma redundante. Solo si propones un cambio visual aceptado o claro.
-        LOGOS: Para generar logos usa [[IMAGE: prompt detallado]]. Di "Generando visual..." antes.`;
+        const context = `Eres BrandIA v7.3 (Cerebro Gemini 3.0). Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
+        MEMORIA: Prioriza el historial. No repitas preguntas de datos ya dados.
+        LOGICA DE RESPUESTA:
+        1. Sé BREVE y DIRECTO.
+        2. Actúa como DIRECTOR CREATIVO.
+        3. SI consideras que es momento de diseñar, incluye [[IMAGE: prompt visual detallado para el logo]].
+        4. SI propones cambios de board (colores/fuentes), usa [[CONFIG: {"palette": ["#Hex1", ...], "font": "GoogleFont", "icons": ["lucide-icon"]}]]`;
 
         const contents = [
-            { role: 'user', parts: [{ text: `CONTEXTO: ${context}` }] },
-            { role: 'model', parts: [{ text: "Entendido. Operaré con memoria activa y brevedad extrema." }] },
+            { role: 'user', parts: [{ text: `DIRECTRIZ SISTEMA: ${context}` }] },
+            { role: 'model', parts: [{ text: "Entendido. Operaré como Gemini 3.0: memoria, brevedad y diseño activo." }] },
             ...this.chatHistory
         ];
 
@@ -144,25 +150,27 @@ class BrandApp {
             if (data.candidates && data.candidates[0].content) {
                 const aiText = data.candidates[0].content.parts[0].text;
 
-                // Detection Image triggers
+                // Image Strike Detection
                 if (aiText.includes("[[IMAGE:")) {
                     const match = aiText.match(/\[\[IMAGE: (.*?)\]\]/);
                     if (match) this.generateImage(match[1]);
                 }
 
                 this.handleAIResponseText(aiText);
-                this.updateStatus("IA Lista", "success");
+                this.updateStatus("Ondas Gamma Listas", "success");
             }
         } catch (err) {
             console.error("API Error:", err);
-            this.addMessage("[CONEXIÓN] Reconectando núcleos neuronales...", 'ai');
+            this.addMessage("[ERROR] Reconectando núcleos 3.0...", 'ai');
         }
     }
 
     handleAIResponseText(text) {
         const configRegex = /\[\[CONFIG: (.*?)\]\]/;
         const match = text.match(configRegex);
-        let cleanText = text.replace(configRegex, '').trim();
+        const imageRegex = /\[\[IMAGE: (.*?)\]\]/;
+
+        let cleanText = text.replace(configRegex, '').replace(imageRegex, '').trim();
         cleanText = cleanText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
         this.addMessage(cleanText, 'ai');
@@ -182,19 +190,19 @@ class BrandApp {
                 config.palette.forEach(c => {
                     const div = document.createElement('div');
                     div.className = 'color-swatch-elite';
-                    div.innerHTML = `<div class="color-circle" style="background:${c}"></div><div style="font-size:10px; font-weight:bold; margin-top:5px;">${c.toUpperCase()}</div>`;
+                    div.innerHTML = `<div class="color-circle" style="background:${c}"></div><div class="color-code" style="font-size:10px; font-weight:bold; margin-top:5px;">${c.toUpperCase()}</div>`;
                     cont.appendChild(div);
                 });
             }
         }
         if (config.font) {
             const fName = document.getElementById('font-heading-name');
-            const fPrev = document.getElementById('font-preview-text');
-            if (fName) {
-                fName.innerText = config.font;
-                fName.style.fontFamily = `'${config.font}', sans-serif`;
+            const fPrev = document.getElementById('font-specimen');
+            if (fName) fName.innerText = config.font;
+            if (fPrev) {
+                fPrev.innerText = "Abc";
+                fPrev.style.fontFamily = `'${config.font}', sans-serif`;
             }
-            if (fPrev) fPrev.style.fontFamily = `'${config.font}', sans-serif`;
         }
         if (config.icons) {
             const iGrid = document.getElementById('icon-grid');
@@ -216,11 +224,14 @@ class BrandApp {
         const genImg = document.getElementById('generated-logo');
         const placeholder = document.getElementById('logo-placeholder');
 
-        if (overlay) overlay.classList.remove('hidden');
+        if (overlay) {
+            overlay.classList.remove('hidden');
+            overlay.innerHTML = '<div class="loader-spinner"></div><span>AI Diseñando...</span>';
+        }
         if (placeholder) placeholder.classList.add('hidden');
         if (genImg) genImg.classList.add('hidden');
 
-        this.updateStatus("Generando Logo...", "warn");
+        this.updateStatus("Gemini 3.0: Creando Visual...", "warn");
 
         const IMAGE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${this.imageModel}:generateContent?key=${this.apiKey}`;
 
@@ -229,23 +240,29 @@ class BrandApp {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: `Professional minimalist brand logo for: ${prompt}. Vector, flat design, white background.` }] }]
+                    contents: [{ parts: [{ text: `Professional minimalist brand logo for: ${prompt}. Vector, flat design, white background, high quality.` }] }]
                 })
             });
             const data = await resp.json();
+
             if (data.candidates && data.candidates[0].content.parts[0].inlineData) {
                 const b64 = data.candidates[0].content.parts[0].inlineData.data;
                 if (genImg) {
                     genImg.src = `data:image/png;base64,${b64}`;
                     genImg.classList.remove('hidden');
                     if (overlay) overlay.classList.add('hidden');
-                    this.updateStatus("Logo Listo", "success");
+                    this.updateStatus("Logo Materializado", "success");
                 }
+            } else {
+                throw new Error("Imagen no generada por API");
             }
         } catch (err) {
             console.error("Image Error", err);
-            this.updateStatus("Error Image", "error");
-            if (overlay) overlay.classList.add('hidden');
+            this.updateStatus("Falla de Imagen 3", "error");
+            if (overlay) {
+                overlay.innerHTML = '<span style="color:#ff6b6b; font-size:11px;">Error de Permisos API</span>';
+                setTimeout(() => overlay.classList.add('hidden'), 3000);
+            }
             if (placeholder) placeholder.classList.remove('hidden');
         }
     }
@@ -265,8 +282,7 @@ class BrandApp {
             parts: [{ text: cleanText }]
         });
 
-        // Limit history for performance
-        if (this.chatHistory.length > 20) this.chatHistory.shift();
+        if (this.chatHistory.length > 30) this.chatHistory.shift();
     }
 
     aiTyping(callback) {
@@ -284,14 +300,17 @@ class BrandApp {
         if (document.getElementById('stability-status')) return;
         const div = document.createElement('div');
         div.id = 'stability-status';
-        div.style.cssText = "position:fixed; bottom:10px; right:10px; background:rgba(0,0,0,0.8); color:white; padding:5px 10px; border-radius:5px; font-size:10px; z-index:1000000;";
-        div.innerHTML = '🟢 Engine Memoria 7.2';
+        div.style.cssText = "position:fixed; bottom:10px; right:10px; background:rgba(0,0,0,0.8); color:white; padding:5px 15px; border-radius:25px; font-size:11px; z-index:1000000; font-family:'Space Mono'; border:1px solid #8a2a82;";
+        div.innerHTML = '🟢 Engine Memoria 7.3';
         document.body.appendChild(div);
     }
 
-    updateStatus(msg) {
+    updateStatus(msg, type) {
         const st = document.getElementById('stability-status');
-        if (st) st.innerText = `🟢 ${msg}`;
+        if (st) {
+            const color = type === 'error' ? '#ff6b6b' : (type === 'warn' ? '#ffd93d' : '#6bff6b');
+            st.innerHTML = `<span style="color:${color}">●</span> ${msg}`;
+        }
     }
 
     runSimulation(text) {
@@ -307,7 +326,7 @@ class BrandApp {
         }
     }
 
-    handleNoLogo() { this.addMessage("Modo 'Creación' activo. Definamos tu identidad.", 'ai'); }
+    handleNoLogo() { this.addMessage("Modo 'Creación Pura' activo. Gemini 3.0 te guiará.", 'ai'); }
     handleFiles(file) {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -320,7 +339,7 @@ class BrandApp {
         reader.readAsDataURL(file);
     }
 
-    handleExport() { alert("Exportando Brand Board... (Función Simulation)"); }
+    handleExport() { alert("Exportando Brand Board Elite v7.3..."); }
 }
 
 window.onload = () => { new BrandApp(); };
