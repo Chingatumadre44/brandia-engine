@@ -4,7 +4,7 @@
 
 class BrandApp {
     constructor() {
-        console.log("🚀 INITIALIZING BRANDIA ENGINE v7.3 [GEMINI 3.0 DUAL]...");
+        console.log("🚀 INITIALIZING BRANDIA ENGINE v7.4 [QUICK SELECTION MATRIX]...");
 
         try {
             // Core UI Selectors
@@ -21,24 +21,42 @@ class BrandApp {
             this.btnExport = document.getElementById('btn-export');
             this.loader = document.getElementById('loader');
 
+            // Onboarding v7.4
+            this.onboardingContainer = document.getElementById('onboarding-container');
+            this.currentStep = 1;
+
+            // Selection Matrix v7.4
+            this.matrixArea = document.getElementById('matrix-selection-area');
+            this.matrixContainer = document.getElementById('matrix-options');
+            this.eliteViewer = document.getElementById('elite-viewer');
+
+            // State for 5 options
+            this.brandOptions = [];
+            this.selectedOptionIndex = 0;
+            this.currentSelections = {
+                logo: 0,
+                colors: 0,
+                fonts: 0,
+                icons: 0
+            };
+
             // Chat
             this.chatMessages = document.getElementById('chat-messages');
             this.chatInput = document.getElementById('chat-input');
             this.sendMsg = document.getElementById('send-msg');
 
             // Data State
-            this.userData = { name: '', profession: '' };
+            this.userData = { name: '', profession: '', industry: '', values: [], style: '' };
             this.chatHistory = []; // Master memory
             this.apiKey = "AIzaSyDW2KmzfXWc" + "PA3KVwTGZAFmsfNiTELk1js";
 
-            // Models (Creative Director Gemini 3.0 Pro + DiceBear Designer)
+            // Models
             this.selectedModel = "gemini-3-pro-preview";
             this.visualEngine = "dicebear";
 
             this.safeInit();
         } catch (err) {
             console.error("FATAL CONSTRUCTOR ERROR:", err);
-            if (window.bypassLogin) window.bypassLogin();
         }
     }
 
@@ -80,33 +98,55 @@ class BrandApp {
             if (!badge) {
                 badge = document.createElement('span');
                 badge.id = 'version-badge';
-                badge.style.cssText = "font-size:10px; background:#8a2a82; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
+                badge.style.cssText = "font-size:10px; background:#D95486; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
                 footer.appendChild(badge);
             }
-            badge.innerText = "v7.3.5 [DICEBEAR STRIKE]";
+            badge.innerText = "v7.4 [QUICK SELECTION MATRIX]";
         }
     }
 
     handleOnboarding() {
-        const nameInput = document.getElementById('ob-user-name');
-        const profInput = document.getElementById('ob-user-prof');
+        if (this.currentStep === 1) {
+            const nameInput = document.getElementById('ob-user-name');
+            const profInput = document.getElementById('ob-user-prof');
+            this.userData.name = nameInput ? nameInput.value.trim() : "Usuario";
+            this.userData.profession = profInput ? profInput.value.trim() : "Brand";
 
-        this.userData.name = nameInput ? nameInput.value.trim() : "Usuario";
-        this.userData.profession = profInput ? profInput.value.trim() : "Brand";
-
-        const helloName = document.getElementById('hello-name');
-        if (helloName) helloName.innerText = this.userData.name;
-
-        if (this.onboarding) this.onboarding.style.display = 'none';
-        if (this.appMain) {
-            this.appMain.classList.remove('blur-content');
-            this.appMain.style.filter = 'none';
-            this.appMain.style.pointerEvents = 'auto';
+            this.updateStepper(2);
+            this.currentStep = 2;
+            this.addMessage(`¡Hola ${this.userData.name}! Cuéntame más sobre la <strong>Industria</strong> y los <strong>Valores</strong> (ej: Minimalista, Humano, Tecnológico) de tu marca de ${this.userData.profession}.`, 'ai');
+        } else if (this.currentStep === 2) {
+            // Step 2 is handled via chat normally or specific inputs
+            this.updateStepper(3);
+            this.currentStep = 3;
+            this.addMessage("Perfecto. Por último, ¿qué <strong>Estilo Visual</strong> prefieres? (ej: Elegante, Moderno, Atrevido, Orgánico).", 'ai');
+        } else {
+            if (this.onboarding) this.onboarding.style.display = 'none';
+            if (this.appMain) {
+                this.appMain.classList.remove('blur-content');
+                this.appMain.style.filter = 'none';
+                this.appMain.style.pointerEvents = 'auto';
+            }
+            this.updateStatus("Matriz de Selección Lista", "success");
+            this.startCreativeProcess();
         }
-
-        const greeting = `¡Hola ${this.userData.name}! Conectando con Gemini 3.0. ¿Cómo visualizas tu marca de ${this.userData.profession}?`;
-        this.addMessage(greeting, 'ai');
         if (window.lucide) window.lucide.createIcons();
+    }
+
+    updateStepper(stepNum) {
+        if (this.onboardingContainer) this.onboardingContainer.classList.remove('hidden');
+        document.querySelectorAll('.step').forEach((s, idx) => {
+            s.classList.remove('active', 'completed');
+            if (idx + 1 < stepNum) s.classList.add('completed');
+            if (idx + 1 === stepNum) s.classList.add('active');
+        });
+    }
+
+    startCreativeProcess() {
+        this.addMessage(`¡Todo listo! Estoy orquestando <strong>5 propuestas de diseño exclusivas</strong> para <strong>${this.userData.name}</strong>. Esto tomará unos segundos de procesamiento neuronal...`, 'ai');
+        this.aiTyping(async () => {
+            await this.callGeminiAPI("GENERATE_MASTER_MATRIX");
+        });
     }
 
     handleUserMessage() {
@@ -116,26 +156,37 @@ class BrandApp {
         this.addMessage(text, 'user');
         this.chatInput.value = '';
 
-        this.aiTyping(async () => {
-            await this.callGeminiAPI(text);
-        });
+        if (this.currentStep < 3) {
+            this.handleOnboarding();
+        } else {
+            this.aiTyping(async () => {
+                await this.callGeminiAPI(text);
+            });
+        }
     }
 
     async callGeminiAPI(prompt) {
         const PEM_URL = `https://generativelanguage.googleapis.com/v1beta/models/${this.selectedModel}:generateContent?key=${this.apiKey}`;
-        this.updateStatus("Sincronizando...", "warn");
+        this.updateStatus("Generando Matriz...", "warn");
 
-        const context = `Eres BrandIA v7.3 (Cerebro Gemini 3.0). Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
-        MEMORIA: Prioriza el historial. No repitas preguntas de datos ya dados.
-        LOGICA DE RESPUESTA:
-        1. Sé BREVE y DIRECTO.
-        2. Actúa como DIRECTOR CREATIVO.
-        3. SI consideras que es momento de diseñar, incluye [[IMAGE: prompt visual detallado para el logo]].
-        4. SI propones cambios de board (colores/fuentes), usa [[CONFIG: {"palette": ["#Hex1", ...], "font": "GoogleFont", "icons": ["lucide-icon"]}]]`;
+        const isMatrixRequest = prompt === "GENERATE_MASTER_MATRIX";
+
+        const context = `Eres BrandIA v7.4 [QUICK SELECTION MATRIX]. Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
+        ${isMatrixRequest ? 'DEBES GENERAR 5 PROPUESTAS COMPLETAS DE BRANDING.' : 'Responde al usuario y actualiza la selección.'}
+        
+        FORMATO OBLIGATORIO JSON PARA MATRIZ:
+        SI es una generación de marca, DEBES incluir [[MATRIX: {"options": [
+            {"id": 0, "logo_prompt": "descriptivo", "palette": ["#...", ...6], "font": "GoogleFont", "icons": ["lucide-icon", ...6], "concept": "nombre breve"},
+            ... repite hasta 5
+        ]}]]
+        
+        LOS LOGOS: Usa DiceBear "initials" o "shapes". Genera un SEED único y descriptivo para cada uno.
+        LAS FUENTES: Sugiere pares (Headers y Body). 
+        COLORES: Paletas de 6 colores armoniosos.`;
 
         const contents = [
             { role: 'user', parts: [{ text: `DIRECTRIZ SISTEMA: ${context}` }] },
-            { role: 'model', parts: [{ text: "Entendido. Operaré como Gemini 3.0: memoria, brevedad y diseño activo." }] },
+            { role: 'model', parts: [{ text: "Entendido. Generaré la Matriz de Selección de 5 opciones con lógica de diseño Quick." }] },
             ...this.chatHistory
         ];
 
@@ -150,36 +201,103 @@ class BrandApp {
             if (data.candidates && data.candidates[0].content) {
                 const aiText = data.candidates[0].content.parts[0].text;
 
-                // Image Strike Detection
-                if (aiText.includes("[[IMAGE:")) {
-                    const match = aiText.match(/\[\[IMAGE: (.*?)\]\]/);
-                    if (match) this.generateImage(match[1]);
+                if (aiText.includes("[[MATRIX:")) {
+                    const match = aiText.match(/\[\[MATRIX: (.*?)\]\]/);
+                    if (match) this.handleMatrixData(JSON.parse(match[1]));
                 }
 
                 this.handleAIResponseText(aiText);
-                this.updateStatus("Ondas Gamma Listas", "success");
+                this.updateStatus("Matriz Materializada", "success");
             }
         } catch (err) {
-            console.error("API Error:", err);
-            this.addMessage("[ERROR] Reconectando núcleos 3.0...", 'ai');
+            console.error("API Error Matrix:", err);
+            this.addMessage("[ERROR] Sincronización fallida.", 'ai');
         }
     }
 
-    handleAIResponseText(text) {
-        const configRegex = /\[\[CONFIG: (.*?)\]\]/;
-        const match = text.match(configRegex);
-        const imageRegex = /\[\[IMAGE: (.*?)\]\]/;
+    handleMatrixData(data) {
+        if (!data || !data.options) return;
+        this.brandOptions = data.options;
+        if (this.matrixArea) this.matrixArea.classList.remove('hidden');
+        this.renderMatrix();
+        // Por defecto, activamos la opción 0
+        this.applyOption(0);
+    }
 
-        let cleanText = text.replace(configRegex, '').replace(imageRegex, '').trim();
-        cleanText = cleanText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    renderMatrix() {
+        if (!this.matrixContainer) return;
+        this.matrixContainer.innerHTML = '';
 
-        this.addMessage(cleanText, 'ai');
+        this.brandOptions.forEach((opt, idx) => {
+            const card = document.createElement('div');
+            card.className = `matrix-option ${this.selectedOptionIndex === idx ? 'active' : ''}`;
+            card.onclick = () => this.applyOption(idx);
 
-        if (match && match[1]) {
-            try {
-                this.updateUIWithAIConfig(JSON.parse(match[1]));
-            } catch (e) { console.error("Config Parse Error", e); }
+            const seed = opt.logo_prompt.replace(/\s+/g, '-');
+            const style = opt.logo_prompt.length < 15 ? 'initials' : 'shapes';
+            const logoUrl = `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(seed)}&backgroundColor=ffffff`;
+
+            card.innerHTML = `
+                <div class="option-num">${idx + 1}</div>
+                <div class="matrix-logo-preview">
+                    <img src="${logoUrl}" alt="Option ${idx}">
+                </div>
+                <div class="text-center mb-2">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${opt.concept || 'Concepto'}</span>
+                </div>
+                <div class="matrix-assets-summary">
+                    ${opt.palette.slice(0, 3).map(c => `<div class="dot-color" style="background:${c}"></div>`).join('')}
+                </div>
+                <div class="mt-3 flex justify-center gap-1">
+                    <button onclick="event.stopPropagation(); app.selectAsset('logo', ${idx})" class="mixer-btn ${this.currentSelections.logo === idx ? 'active' : ''}">Logo</button>
+                    <button onclick="event.stopPropagation(); app.selectAsset('colors', ${idx})" class="mixer-btn ${this.currentSelections.colors === idx ? 'active' : ''}">Color</button>
+                </div>
+            `;
+            this.matrixContainer.appendChild(card);
+        });
+    }
+
+    applyOption(idx) {
+        this.selectedOptionIndex = idx;
+        // Al aplicar una opción completa, reseteamos selecciones individuales para esta opción
+        this.currentSelections = { logo: idx, colors: idx, fonts: idx, icons: idx };
+        this.updateFinalBoard();
+        this.renderMatrix();
+    }
+
+    selectAsset(type, idx) {
+        this.currentSelections[type] = idx;
+        this.updateFinalBoard();
+        this.renderMatrix();
+        this.updateStatus(`Mix: ${type.toUpperCase()} de Opción ${idx + 1}`, "success");
+    }
+
+    updateFinalBoard() {
+        const logoOpt = this.brandOptions[this.currentSelections.logo];
+        const colorOpt = this.brandOptions[this.currentSelections.colors];
+        const fontOpt = this.brandOptions[this.currentSelections.fonts];
+        const iconOpt = this.brandOptions[this.currentSelections.icons];
+
+        // Update Logo
+        const style = logoOpt.logo_prompt.length < 15 ? 'initials' : 'shapes';
+        const logoUrl = `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(logoOpt.logo_prompt.replace(/\s+/g, '-'))}&backgroundColor=ffffff`;
+        const genImg = document.getElementById('generated-logo');
+        const placeholder = document.getElementById('logo-placeholder');
+        if (genImg) {
+            genImg.src = logoUrl;
+            genImg.classList.remove('hidden');
+            genImg.onclick = () => this.openEliteViewer(logoUrl);
         }
+        if (placeholder) placeholder.classList.add('hidden');
+
+        // Update Colors
+        this.updateUIWithAIConfig({ palette: colorOpt.palette });
+
+        // Update Fonts
+        this.updateUIWithAIConfig({ font: fontOpt.font });
+
+        // Update Icons
+        this.updateUIWithAIConfig({ icons: iconOpt.icons });
     }
 
     updateUIWithAIConfig(config) {
@@ -200,7 +318,7 @@ class BrandApp {
             const fPrev = document.getElementById('font-specimen');
             if (fName) fName.innerText = config.font;
             if (fPrev) {
-                fPrev.innerText = "Abc";
+                fPrev.innerText = "BrandIA Style";
                 fPrev.style.fontFamily = `'${config.font}', sans-serif`;
             }
         }
@@ -289,12 +407,69 @@ class BrandApp {
         }, 1200);
     }
 
+    async generateBrandPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFillColor(0, 42, 50); // Dark Teal
+        doc.rect(0, 0, 210, 40, 'F');
+
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(22);
+        doc.text("BRANDIA ELITE BRAND BOOK", 105, 20, { align: 'center' });
+        doc.setFontSize(12);
+        doc.text(`Identidad para: ${this.userData.name}`, 105, 30, { align: 'center' });
+
+        doc.setTextColor(0, 42, 50);
+        doc.setFontSize(16);
+        doc.text("1. Paleta de Colores", 20, 60);
+
+        const colors = this.brandOptions[this.currentSelections.colors].palette;
+        colors.forEach((c, idx) => {
+            doc.setFillColor(c);
+            doc.rect(20 + (idx * 30), 70, 20, 20, 'F');
+            doc.setFontSize(8);
+            doc.text(c.toUpperCase(), 30 + (idx * 30), 95, { align: 'center' });
+        });
+
+        doc.setFontSize(16);
+        doc.text("2. Tipografías Sugeridas", 20, 120);
+        const font = this.brandOptions[this.currentSelections.fonts].font;
+        doc.setFontSize(12);
+        doc.text(`Primaria: ${font}`, 20, 130);
+        doc.text("Muestra: ABCDEFGHIJKLMNOPQRSTUVWXYZ", 20, 140);
+
+        doc.setFontSize(16);
+        doc.text("3. Concepto Visual", 20, 170);
+        doc.setFontSize(10);
+        const concept = this.brandOptions[this.currentSelections.logo].logo_prompt;
+        doc.text(doc.splitTextToSize(concept, 170), 20, 180);
+
+        doc.save(`${this.userData.name}_BrandBook.pdf`);
+        this.updateStatus("PDF Descargado", "success");
+    }
+
+    openEliteViewer(src) {
+        if (!this.eliteViewer) return;
+        this.eliteViewer.classList.add('active');
+        const container = document.getElementById('viewer-logo-container');
+        if (container) {
+            container.innerHTML = `<img src="${src}" class="viewer-image">`;
+        }
+        const name = document.getElementById('viewer-brand-name');
+        if (name) name.innerText = this.userData.name;
+    }
+
+    closeEliteViewer() {
+        if (this.eliteViewer) this.eliteViewer.classList.remove('active');
+    }
+
     addConnectionStatusUI() {
         if (document.getElementById('stability-status')) return;
         const div = document.createElement('div');
         div.id = 'stability-status';
-        div.style.cssText = "position:fixed; bottom:10px; right:10px; background:rgba(0,0,0,0.8); color:white; padding:5px 15px; border-radius:25px; font-size:11px; z-index:1000000; font-family:'Space Mono'; border:1px solid #8a2a82;";
-        div.innerHTML = '🟢 Engine Memoria 7.3';
+        div.style.cssText = "position:fixed; bottom:10px; right:10px; background:#002A32; color:white; padding:5px 15px; border-radius:25px; font-size:11px; z-index:1000000; font-family:'Space Mono'; border:1px solid #D95486;";
+        div.innerHTML = '🟢 Engine Selection Matrix 7.4';
         document.body.appendChild(div);
     }
 
@@ -332,7 +507,7 @@ class BrandApp {
         reader.readAsDataURL(file);
     }
 
-    handleExport() { alert("Exportando Brand Board Elite v7.3..."); }
+    handleExport() { this.generateBrandPDF(); }
 }
 
-window.onload = () => { new BrandApp(); };
+window.onload = () => { window.app = new BrandApp(); };

@@ -4,14 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BrandIA Engine v7.3.5 [DICEBEAR STRIKE]</title>
-    <!-- Last Build: 2026-02-02 10:55 -->
+    <title>BrandIA Engine v7.4 [QUICK IA VISION MATRIX]</title>
+    <!-- Last Build: 2026-02-02 11:55 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Outfit:wght@300;400;600;800&family=Playfair+Display:wght@700&family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap"
         rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="style.css?v=7.0">
 
     <!-- Emergency Bypass Script -->
@@ -135,97 +137,119 @@
 
                         <!-- Subida de Logo -->
                         <div class="board-card upload-section-v2">
-                            <div class="upload-header">
-                                <i data-lucide="upload-cloud"></i>
-                                <span>Subir / Actualizar Logo Actual</span>
-                            </div>
-                            <div class="upload-controls">
-                                <div id="drop-zone" class="drop-zone-mini">
-                                    <span id="upload-hint">Subir Archivo</span>
-                                    <input type="file" id="file-input" hidden accept="image/*">
-                                    <button id="btn-upload" class="btn-secondary-mini">Buscar</button>
+                            <!-- v7.4 Onboarding Stepper -->
+                            <div id="onboarding-container" class="mb-6 hidden">
+                                <div class="stepper-container">
+                                    <div class="step active" id="step-1">1</div>
+                                    <div class="step" id="step-2">2</div>
+                                    <div class="step" id="step-3">3</div>
                                 </div>
-                                <button id="no-logo-btn" class="btn-ghost-mini">Usar IA</button>
-                                <div id="preview-cont" class="preview-mini hidden">
-                                    <img id="preview-img" src="" alt="Preview">
+                            </div>
+
+                            <div id="chat-messages" class="chat-scroll space-y-4 mb-4">
+                                <div class="upload-controls">
+                                    <div id="drop-zone" class="drop-zone-mini">
+                                        <span id="upload-hint">Subir Archivo</span>
+                                        <input type="file" id="file-input" hidden accept="image/*">
+                                        <button id="btn-upload" class="btn-secondary-mini">Buscar</button>
+                                    </div>
+                                    <button id="no-logo-btn" class="btn-ghost-mini">Usar IA</button>
+                                    <div id="preview-cont" class="preview-mini hidden">
+                                        <img id="preview-img" src="" alt="Preview">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Brand Board -->
-                    <div class="brand-board" id="brand-board">
-                        <div class="board-header">
-                            <div class="header-left">
-                                <h2><i data-lucide="layout"></i> Brand Board</h2>
-                                <p>Identidad Visual Estratégica</p>
+                        <!-- v7.4 Selection Matrix -->
+                        <div id="matrix-selection-area" class="mb-8 hidden">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-xl font-bold text-slate-800 flex items-center">
+                                    <i data-lucide="layers" class="mr-2 text-[#1CB99C]"></i> Matriz de Selección (5
+                                    Opciones)
+                                </h2>
+                                <span class="bg-[#95E6D5] text-[#002A32] text-xs font-bold px-3 py-1 rounded-full">
+                                    Mix & Match Habilitado
+                                </span>
                             </div>
-                            <button class="btn-secondary" id="btn-export">
-                                <i data-lucide="download"></i> Exportar
-                            </button>
+                            <div id="matrix-options" class="matrix-container">
+                                <!-- 5 Matrix options will be injected here -->
+                            </div>
                         </div>
 
-                        <div class="board-grid">
-                            <!-- Logo Section -->
-                            <div class="board-card logo-section">
-                                <div class="card-label">Identidad Visual</div>
-                                <div class="logo-display">
-                                    <div class="logo-box current">
-                                        <span class="label">ACTUAL</span>
-                                        <div class="logo-display-inner">
-                                            <img id="logo-actual-display" src="" alt="" class="hidden">
-                                            <div id="logo-empty-state" class="empty-logo-msg">
-                                                <i data-lucide="image"></i>
-                                                <span>Sin logo base</span>
+                        <!-- Brand Board -->
+                        <div class="brand-board" id="brand-board">
+                            <div class="board-header">
+                                <div class="header-left">
+                                    <h2><i data-lucide="layout"></i> Brand Board</h2>
+                                    <p>Identidad Visual Estratégica</p>
+                                </div>
+                                <button class="btn-secondary" id="btn-export">
+                                    <i data-lucide="download"></i> Exportar
+                                </button>
+                            </div>
+
+                            <div class="board-grid">
+                                <!-- Logo Section -->
+                                <div class="board-card logo-section">
+                                    <div class="card-label">Identidad Visual</div>
+                                    <div class="logo-display">
+                                        <div class="logo-box current">
+                                            <span class="label">ACTUAL</span>
+                                            <div class="logo-display-inner">
+                                                <img id="logo-actual-display" src="" alt="" class="hidden">
+                                                <div id="logo-empty-state" class="empty-logo-msg">
+                                                    <i data-lucide="image"></i>
+                                                    <span>Sin logo base</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="logo-box generated" id="logo-gen-container">
-                                        <span class="label">SUGERIDO IA</span>
-                                        <div class="gen-status-overlay hidden" id="gen-status-overlay">
-                                            <div class="mini-spinner"></div>
+                                        <div class="logo-box generated" id="logo-gen-container">
+                                            <span class="label">SUGERIDO IA</span>
+                                            <div class="gen-status-overlay hidden" id="gen-status-overlay">
+                                                <div class="mini-spinner"></div>
+                                            </div>
+                                            <img src="" alt="Propuesta" id="generated-logo" class="hidden">
+                                            <div class="placeholder" id="logo-placeholder">Listo para crear</div>
                                         </div>
-                                        <img src="" alt="Propuesta" id="generated-logo" class="hidden">
-                                        <div class="placeholder" id="logo-placeholder">Listo para crear</div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Colors Section -->
-                            <div class="board-card color-section">
-                                <div class="card-label">Paleta de Colores</div>
-                                <div class="color-palette" id="color-palette">
-                                    <!-- Dynamic Elite Swatches -->
-                                    <div class="color-swatch-empty"></div>
-                                    <div class="color-swatch-empty"></div>
-                                    <div class="color-swatch-empty"></div>
-                                    <div class="color-swatch-empty"></div>
+                                <!-- Colors Section -->
+                                <div class="board-card color-section">
+                                    <div class="card-label">Paleta de Colores</div>
+                                    <div class="color-palette" id="color-palette">
+                                        <!-- Dynamic Elite Swatches -->
+                                        <div class="color-swatch-empty"></div>
+                                        <div class="color-swatch-empty"></div>
+                                        <div class="color-swatch-empty"></div>
+                                        <div class="color-swatch-empty"></div>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- Typography Section -->
-                            <div class="board-card font-section">
-                                <div class="card-label">Tipografía Elite</div>
-                                <div class="font-preview">
-                                    <h4 id="font-heading-name">Inter / Montserrat</h4>
-                                    <p id="font-preview-text">La tipografía es la voz de tu marca.</p>
+                                <!-- Typography Section -->
+                                <div class="board-card font-section">
+                                    <div class="card-label">Tipografía Elite</div>
+                                    <div class="font-preview">
+                                        <h4 id="font-heading-name">Inter / Montserrat</h4>
+                                        <p id="font-preview-text">La tipografía es la voz de tu marca.</p>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- Icons Section -->
-                            <div class="board-card icon-section">
-                                <div class="card-label">Iconografía IA</div>
-                                <div class="icon-grid" id="icon-grid">
-                                    <!-- Dynamic Elite Icons -->
-                                    <div class="icon-swatch-empty"></div>
-                                    <div class="icon-swatch-empty"></div>
-                                    <div class="icon-swatch-empty"></div>
-                                    <div class="icon-swatch-empty"></div>
+                                <!-- Icons Section -->
+                                <div class="board-card icon-section">
+                                    <div class="card-label">Iconografía IA</div>
+                                    <div class="icon-grid" id="icon-grid">
+                                        <!-- Dynamic Elite Icons -->
+                                        <div class="icon-swatch-empty"></div>
+                                        <div class="icon-swatch-empty"></div>
+                                        <div class="icon-swatch-empty"></div>
+                                        <div class="icon-swatch-empty"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
             </section>
         </main>
     </div>
@@ -239,7 +263,29 @@
     </div>
 
     <!-- Script Versionado para romper Caché -->
-    <script src="js/main.js?v=7.3.5"></script>
+    <!-- Elite Viewer Modal -->
+    <div id="elite-viewer" class="elite-viewer-modal">
+        <div class="viewer-content">
+            <button class="viewer-close" onclick="app.closeEliteViewer()">
+                <i data-lucide="x"></i>
+            </button>
+            <div id="viewer-logo-container" class="w-full flex justify-center p-8 bg-white rounded-xl shadow-inner">
+                <!-- Large Logo SVG/Img will be here -->
+            </div>
+            <div class="viewer-info">
+                <h3 id="viewer-brand-name" class="text-2xl font-bold text-slate-800 mb-2"></h3>
+                <p id="viewer-brand-tagline" class="text-slate-500"></p>
+                <div class="flex gap-4 mt-6">
+                    <button onclick="app.generateBrandPDF()"
+                        class="bg-[#D95486] text-white px-6 py-3 rounded-full font-bold shadow-lg hover:scale-105 transition-all">
+                        <i data-lucide="download" class="inline-block mr-2"></i> Exportar Brand Book (PDF)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js?v=7.4"></script>
 </body>
 
 </html>
