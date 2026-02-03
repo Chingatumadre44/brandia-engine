@@ -109,56 +109,59 @@
 
             <section class="workspace-v77">
                 <!-- Dual Column Layout for Controls (Upper Rank) -->
-                <div class="grid-v76 mb-8">
-                    <!-- Column 1: Discovery & Chat (7 Units) - PROMINENT -->
-                    <div class="col-chat lg:col-span-7 col-span-12">
-                        <div class="card chat-card">
-                            <div class="card-header">
-                                <h3><i data-lucide="message-square"></i> Asistente de Marca IA v7.7</h3>
+                <div class="grid-v76 mb-8 mt-6">
+                    <!-- Column 1: Discovery & Chat (PROMINENT) -->
+                    <div class="col-chat lg:col-span-8 col-span-12">
+                        <div class="card chat-card-elite shadow-2xl">
+                            <div class="card-header-elite">
+                                <h3 class="flex items-center gap-2 font-bold text-slate-700">
+                                    <i data-lucide="sparkles" class="text-pink-500"></i> Diseñador de Identidad v7.8
+                                </h3>
+                                <p class="text-xs text-slate-400 font-medium tracking-tight">Define tu visión antes de
+                                    generar la matriz profesional.</p>
                             </div>
-                            <div class="chat-container" id="chat-messages">
+                            <div class="chat-container-elite" id="chat-messages">
                                 <div class="message ai">
-                                    ¡Hola! He refinado mi motor SVG. Ahora genero diseños elite con iniciales abstractas
-                                    y símbolos profesionales. ¿Qué marca crearemos hoy?
+                                    ¡Hola! Soy tu director creativo v7.8. He refinado mi motor para crear **marcas de
+                                    nivel agencia**.
+                                    <br><br>
+                                    Háblame de tu visión, los valores que quieres transmitir y el estilo que buscas. Una
+                                    vez que estemos alineados, generaré **5 propuestas completas** (Logo, Colores,
+                                    Fuentes e Iconos).
                                 </div>
                             </div>
 
-                            <div class="chat-input-area border-t pt-4">
-                                <div class="flex items-center px-4 mb-2">
+                            <div class="chat-input-area-elite p-6 bg-white border-t">
+                                <div class="flex flex-col gap-4">
                                     <textarea id="chat-input"
-                                        placeholder="Escribe tu visión de marca (ej: Logo minimalista para clínica dental)..."
-                                        rows="2"></textarea>
-                                    <button id="send-msg">
-                                        <i data-lucide="sparkles"></i>
-                                    </button>
-                                </div>
-                                <div class="upload-controls px-4 py-2 border-t mt-2 flex justify-between items-center">
-                                    <div id="drop-zone" class="drop-zone-mini-v77">
-                                        <input type="file" id="file-input" hidden accept="image/*">
-                                        <button id="btn-upload" class="btn-ghost-mini">Subir Logo Base
-                                            (Opcional)</button>
-                                    </div>
-                                    <div id="onboarding-stepper-v77" class="hidden">
-                                        <div class="stepper-container-mini">
-                                            <div class="step active" id="step-1">1</div>
-                                            <div class="step" id="step-2">2</div>
-                                            <div class="step" id="step-3">3</div>
+                                        placeholder="Escribe aquí tu visión de marca con lujo de detalle..."
+                                        class="w-full text-lg p-5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-pink-500 transition-all outline-none"
+                                        rows="4"></textarea>
+                                    <div class="flex justify-between items-center">
+                                        <div id="onboarding-status"
+                                            class="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                                            IA A la espera de instrucciones
                                         </div>
+                                        <button id="send-msg"
+                                            class="bg-[#D95486] hover:bg-[#B83D6B] text-white px-8 py-3 rounded-full font-bold flex items-center gap-3 shadow-lg transform hover:scale-105 transition-all">
+                                            <span>ENVIAR VISIÓN</span>
+                                            <i data-lucide="arrow-right"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Column 2: Selection Matrix (5 Units) -->
-                    <div class="col-matrix lg:col-span-12 col-span-12">
-                        <div id="matrix-selection-area" class="hidden">
-                            <div class="flex items-center justify-between mb-4">
-                                <h2 class="text-xl font-bold text-slate-800 flex items-center">
-                                    <i data-lucide="layers" class="mr-2 text-[#1CB99C]"></i> Matriz de Selección
+                    <!-- Column 2: Selection Matrix (Hidden Initially) -->
+                    <div class="col-matrix lg:col-span-12 col-span-12 hidden" id="matrix-selection-area">
+                        <div class="matrix-card-elite p-6 bg-white rounded-3xl shadow-xl">
+                            <div class="flex items-center justify-between mb-6">
+                                <h2 class="text-2xl font-bold text-slate-800 flex items-center">
+                                    <i data-lucide="layers" class="mr-3 text-[#1CB99C]"></i> Propuestas de Diseño
                                 </h2>
-                                <span class="bg-[#95E6D5] text-[#002A32] text-xs font-bold px-3 py-1 rounded-full">
-                                    5 Propuestas Elite
+                                <span class="bg-[#95E6D5] text-[#002A32] text-xs font-bold px-4 py-2 rounded-full">
+                                    5 CONCEPTOS ELITE
                                 </span>
                             </div>
                             <div id="matrix-options" class="matrix-container-grid">
@@ -168,48 +171,54 @@
                     </div>
                 </div>
 
-                <!-- Result Section: Brand Board (Full Width) -->
-                <div class="hero-brand-section">
-                    <div class="brand-board" id="brand-board">
+                <!-- Result Section: Brand Board (Hidden Initially) -->
+                <div class="hero-brand-section hidden" id="brand-board-hero">
+                    <div class="brand-board shadow-2xl border border-white" id="brand-board">
                         <div class="board-header">
                             <div class="header-left">
-                                <h2><i data-lucide="layout"></i> Brand Board</h2>
-                                <p>Identidad Visual Estratégica [SVG PRO v7.7]</p>
+                                <h2 class="text-2xl font-black italic tracking-tighter"><i data-lucide="component"></i>
+                                    BRAND BOARD</h2>
+                                <p class="text-slate-500">Identidad Visual Estratégica [AGENCY GRADE v7.8]</p>
                             </div>
-                            <button class="btn-secondary" id="btn-export">
-                                <i data-lucide="download"></i> Exportar Brand Book (PDF)
-                            </button>
+                            <div class="flex gap-4">
+                                <button class="btn-secondary" id="btn-export">
+                                    <i data-lucide="download"></i> Descargar Brand Assets
+                                </button>
+                            </div>
                         </div>
 
                         <div class="board-grid">
-                            <!-- Logo Section -->
+                            <!-- Logo Section with Upload Ability -->
                             <div class="board-card logo-section">
-                                <div class="card-label">Identidad Visual</div>
+                                <div class="card-label">Logotipo Maestro</div>
                                 <div class="logo-display">
                                     <div class="logo-box current">
-                                        <span class="label">TU LOGO BASE</span>
-                                        <div class="logo-display-inner">
-                                            <img id="logo-actual-display" src="" alt="" class="hidden">
-                                            <div id="logo-empty-state" class="empty-logo-msg">
-                                                <i data-lucide="image"></i>
-                                                <span>Esperando base...</span>
+                                        <span class="label">LOGO BASE / REFERENCIA</span>
+                                        <div class="logo-display-inner" id="drop-zone">
+                                            <img id="logo-actual-display" src="" alt=""
+                                                class="hidden w-full h-full object-contain">
+                                            <div id="logo-empty-state" class="empty-logo-msg text-center p-4">
+                                                <i data-lucide="upload-cloud" class="mx-auto mb-2 text-slate-300"></i>
+                                                <p class="text-[10px] text-slate-400">Clic para subir logo actual si
+                                                    tienes uno</p>
+                                                <input type="file" id="file-input" hidden accept="image/*">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="logo-box generated" id="logo-gen-container">
-                                        <span class="label">IA NATIVE SVG PRO</span>
+                                        <span class="label">IA VECTORIAL PRO</span>
                                         <div class="gen-status-overlay hidden" id="gen-status-overlay">
                                             <div class="mini-spinner"></div>
                                         </div>
                                         <div id="generated-logo" class="generated-logo-svg hidden"></div>
-                                        <div class="placeholder" id="logo-placeholder">Listo para crear</div>
+                                        <div class="placeholder" id="logo-placeholder">Esperando matriz...</div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Colors & Fonts -->
                             <div class="board-card color-section">
-                                <div class="card-label">Paleta de Colores</div>
+                                <div class="card-label">Paleta Cromática</div>
                                 <div class="color-palette" id="color-palette">
                                     <div class="color-swatch-empty"></div>
                                     <div class="color-swatch-empty"></div>
@@ -219,18 +228,20 @@
                             </div>
 
                             <div class="board-card font-section">
-                                <div class="card-label">Tipografía Elite</div>
+                                <div class="card-label">Sistemas Tipográficos</div>
                                 <div class="font-preview">
-                                    <h4 id="font-heading-name">Inter / Montserrat</h4>
-                                    <div id="font-specimen" class="text-3xl font-bold mt-4">BrandIA Style</div>
-                                    <p id="font-preview-text" class="text-sm text-slate-500 mt-2">La voz visual de tu
-                                        marca.</p>
+                                    <h4 id="font-heading-name" class="text-xs uppercase tracking-widest text-[#D95486]">
+                                        Inter / Montserrat</h4>
+                                    <div id="font-specimen" class="text-4xl font-bold mt-4 tracking-tight">BRAND
+                                        IDENTITY</div>
+                                    <p id="font-preview-text" class="text-sm text-slate-400 mt-2 font-medium">La voz
+                                        visual de tu marca articulada por IA.</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
+                <!-- End workspace-v77 -->
             </section>
         </main>
     </div>

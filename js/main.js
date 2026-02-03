@@ -68,7 +68,7 @@ class BrandApp {
         if (this.btnStart) {
             this.btnStart.onclick = (e) => {
                 e.preventDefault();
-                this.handleOnboarding();
+                this.handleOnboarding(true); // Skipped to dashboard
             };
         }
 
@@ -101,11 +101,15 @@ class BrandApp {
                 badge.style.cssText = "font-size:10px; background:#D95486; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
                 footer.appendChild(badge);
             }
-            badge.innerText = "v7.7 [SVG PRO + CHAT RESTORE]";
+            badge.innerText = "v7.8 [ELITE AGENCY FLOW]";
         }
     }
 
-    handleOnboarding() {
+    handleOnboarding(isSkip = false) {
+        if (isSkip) {
+            this.currentStep = 3; // Jump to end
+        }
+
         if (this.currentStep === 1) {
             const nameInput = document.getElementById('ob-user-name');
             const profInput = document.getElementById('ob-user-prof');
@@ -114,21 +118,25 @@ class BrandApp {
 
             this.updateStepper(2);
             this.currentStep = 2;
-            this.addMessage(`¡Hola ${this.userData.name}! Cuéntame más sobre la <strong>Industria</strong> y los <strong>Valores</strong> (ej: Minimalista, Humano, Tecnológico) de tu marca de ${this.userData.profession}.`, 'ai');
+            this.addMessage(`¡Hola ${this.userData.name}! Cuéntame más sobre la <strong>Industria</strong> y los <strong>Valores</strong> de tu marca de ${this.userData.profession}.`, 'ai');
         } else if (this.currentStep === 2) {
-            // Step 2 is handled via chat normally or specific inputs
             this.updateStepper(3);
             this.currentStep = 3;
-            this.addMessage("Perfecto. Por último, ¿qué <strong>Estilo Visual</strong> prefieres? (ej: Elegante, Moderno, Atrevido, Orgánico).", 'ai');
+            this.addMessage("Perfecto. ¿Qué <strong>Estilo Visual</strong> prefieres? (ej: Minimalista, Elegante, Moderno).", 'ai');
         } else {
-            if (this.onboarding) this.onboarding.style.display = 'none';
+            if (this.onboarding) {
+                this.onboarding.style.opacity = '0';
+                setTimeout(() => this.onboarding.style.display = 'none', 500);
+            }
             if (this.appMain) {
                 this.appMain.classList.remove('blur-content');
                 this.appMain.style.filter = 'none';
                 this.appMain.style.pointerEvents = 'auto';
             }
             this.updateStatus("Matriz de Selección Lista", "success");
-            this.startCreativeProcess();
+            // En la v7.8 NO generamos la matriz automáticamente al entrar, 
+            // dejamos que el usuario hable con el chat primero para alinear visión.
+            this.addMessage("¡Bienvenido al Dashboard Elite! Describe tu visión aquí abajo para empezar el proceso creativo.", 'ai');
         }
         if (window.lucide) window.lucide.createIcons();
     }
@@ -171,25 +179,27 @@ class BrandApp {
 
         const isMatrixRequest = prompt === "GENERATE_MASTER_MATRIX";
 
-        const context = `Eres BrandIA v7.7 [ELITE SVG ENGINE]. Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
-        ${isMatrixRequest ? 'DEBES GENERAR 5 PROPUESTAS COMPLETAS DE BRANDING PROFESIONAL.' : 'Responde al usuario y actualiza la selección.'}
+        const context = `Eres BrandIA v7.8 [ELITE AGENCY ENGINE]. Director Creativo experto.
+        Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
         
-        FORMATO OBLIGATORIO JSON PARA MATRIZ:
-        SI es una generación de marca, DEBES incluir [[MATRIX: {"options": [
+        OBJETIVO: El usuario busca un diseño de "Gallery Standards" (Estándares de Galería). 
+        Inspiración: Behance, Dribbble, Diseño Suizo, Minimalismo Bauhaus.
+
+        SI el usuario pide generar o el prompt es "GENERATE_MASTER_MATRIX", DEBES incluir EXACTAMENTE [[MATRIX: {"options": [
             {"id": 0, "svg_code": "<svg ...>...</svg>", "palette": ["#...", ...6], "font": "GoogleFont", "icons": ["lucide-icon", ...6], "concept": "nombre breve"},
             ... repite hasta 5 
-        ]}]]
+        ]}]] con 5 propuestas completas.
         
-        LOGOS SVG ELITE:
-        1. Minimalismo de Agencia (Apple, Airbnb, Tesla).
-        2. Usa <path>, <circle>, <rect> con precisión.
-        3. INTEGRA las iniciales del usuario (${this.userData.name}) de forma abstracta o tipográfica elegante.
-        4. SÍMBOLO: Crea un icono vectorial ÚNICO para el sector (${this.userData.profession}).
-        5. COLOR: Inyecta los colores de la paleta directamente en el SVG (fill="url(#grad)" o fill="#hex").
-        6. VIEWBOX: "0 0 100 100". Debe ser elegante y simétrico.
+        LOGOS SVG ELITE (CRÍTICO):
+        1. NO hagas iniciales simples. Crea ISOTIPOS abstractos o MONOGRAMAS complejos y elegantes.
+        2. Usa formas geométricas puras (<path d="..." fill="url(#grad)" />).
+        3. INTEGRACIÓN: Las letras deben ser parte del icono, no solo texto debajo.
+        4. ESTILO: Minimalista pero con carácter (ej: Líneas finas, espaciado negativo, gradientes sutiles).
+        5. VIEWBOX obligatorio: "0 0 100 100".
+        6. COLOR: Usa combinaciones de lujo (Oro y Negro, Menta y Gris Espacial, etc.).
         
-        LAS FUENTES: Sugiere pares premium (Headers y Body). 
-        COLORES: Paletas de 6 colores armoniosos de alta gama.`;
+        PALETA: 6 colores (Base, Acento, Sombras, Texto).
+        FUENTES: Pares premium (Sans Serif modernas o Serif elegantes).`;
 
         const contents = [
             { role: 'user', parts: [{ text: `DIRECTRIZ SISTEMA: ${context}` }] },
@@ -215,10 +225,8 @@ class BrandApp {
                 let matrixData = null;
                 if (aiText.includes("[[MATRIX:")) {
                     try {
-                        // Extract just the JSON object within the tag
                         const match = aiText.match(/\[\[MATRIX:\s*(\{.*?\})\s*\]\]/s);
                         if (match && match[1]) {
-                            // Clean potential markdown or extra chars
                             const jsonStr = match[1].replace(/```json/g, '').replace(/```/g, '');
                             matrixData = JSON.parse(jsonStr);
                             this.handleMatrixData(matrixData);
@@ -226,7 +234,6 @@ class BrandApp {
                     } catch (e) {
                         console.error("Matrix Parse Error:", e);
                         this.addMessage("⚠️ Error procesando la matriz visual. Reintentando...", 'error');
-                        // Optional: Retry logic could be here
                     }
                 }
 
@@ -244,10 +251,22 @@ class BrandApp {
     handleMatrixData(data) {
         if (!data || !data.options) return;
         this.brandOptions = data.options;
-        if (this.matrixArea) this.matrixArea.classList.remove('hidden');
+
+        // Reveal results in v7.8
+        const matrixArea = document.getElementById('matrix-selection-area');
+        const boardHero = document.getElementById('brand-board-hero');
+
+        if (matrixArea) {
+            matrixArea.classList.remove('hidden');
+            matrixArea.style.animation = "fadeInScale 0.8s ease-out forwards";
+        }
+        if (boardHero) {
+            boardHero.classList.remove('hidden');
+            boardHero.style.animation = "fadeInScale 1s ease-out forwards";
+        }
+
         this.renderMatrix();
-        // Por defecto, activamos la opción 0
-        this.applyOption(0);
+        this.applyOption(0); // Auto-apply the first elite option
     }
 
     renderMatrix() {
