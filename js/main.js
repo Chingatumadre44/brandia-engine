@@ -4,7 +4,7 @@
 
 class BrandApp {
     constructor() {
-        console.log("🚀 INITIALIZING BRANDIA ENGINE v7.4 [QUICK SELECTION MATRIX]...");
+        console.log("🚀 INITIALIZING BRANDIA ENGINE v7.7 [SVG PRO + CHAT RESTORE]...");
 
         try {
             // Core UI Selectors
@@ -101,7 +101,7 @@ class BrandApp {
                 badge.style.cssText = "font-size:10px; background:#D95486; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
                 footer.appendChild(badge);
             }
-            badge.innerText = "v7.6 [NATIVE SVG ENGINE]";
+            badge.innerText = "v7.7 [SVG PRO + CHAT RESTORE]";
         }
     }
 
@@ -171,8 +171,8 @@ class BrandApp {
 
         const isMatrixRequest = prompt === "GENERATE_MASTER_MATRIX";
 
-        const context = `Eres BrandIA v7.6 [NATIVE SVG ENGINE]. Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
-        ${isMatrixRequest ? 'DEBES GENERAR 5 PROPUESTAS COMPLETAS DE BRANDING.' : 'Responde al usuario y actualiza la selección.'}
+        const context = `Eres BrandIA v7.7 [ELITE SVG ENGINE]. Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
+        ${isMatrixRequest ? 'DEBES GENERAR 5 PROPUESTAS COMPLETAS DE BRANDING PROFESIONAL.' : 'Responde al usuario y actualiza la selección.'}
         
         FORMATO OBLIGATORIO JSON PARA MATRIZ:
         SI es una generación de marca, DEBES incluir [[MATRIX: {"options": [
@@ -180,15 +180,16 @@ class BrandApp {
             ... repite hasta 5 
         ]}]]
         
-        LOS LOGOS: NO USES APIS EXTERNAS. ESCRIBE EL CÓDIGO <svg> DIRECTAMENTE.
-        REQUISITOS SVG: 
-        1. Minimalista, moderno, corporativo.
-        2. INCLUYE las iniciales del usuario (${this.userData.name}) de forma elegante si es apropiado.
-        3. Agrega un símbolo geométrico/icónico relacionado con el sector (${this.userData.profession}).
-        4. Usa viewBox="0 0 100 100" y asegura que sea escalable.
+        LOGOS SVG ELITE:
+        1. Minimalismo de Agencia (Apple, Airbnb, Tesla).
+        2. Usa <path>, <circle>, <rect> con precisión.
+        3. INTEGRA las iniciales del usuario (${this.userData.name}) de forma abstracta o tipográfica elegante.
+        4. SÍMBOLO: Crea un icono vectorial ÚNICO para el sector (${this.userData.profession}).
+        5. COLOR: Inyecta los colores de la paleta directamente en el SVG (fill="url(#grad)" o fill="#hex").
+        6. VIEWBOX: "0 0 100 100". Debe ser elegante y simétrico.
         
-        LAS FUENTES: Sugiere pares (Headers y Body). 
-        COLORES: Paletas de 6 colores armoniosos.`;
+        LAS FUENTES: Sugiere pares premium (Headers y Body). 
+        COLORES: Paletas de 6 colores armoniosos de alta gama.`;
 
         const contents = [
             { role: 'user', parts: [{ text: `DIRECTRIZ SISTEMA: ${context}` }] },
@@ -498,7 +499,7 @@ class BrandApp {
         const div = document.createElement('div');
         div.id = 'stability-status';
         div.style.cssText = "position:fixed; bottom:10px; right:10px; background:#002A32; color:white; padding:5px 15px; border-radius:25px; font-size:11px; z-index:1000000; font-family:'Space Mono'; border:1px solid #D95486;";
-        div.innerHTML = '🟢 Engine Native SVG 7.6';
+        div.innerHTML = '🟢 Engine SVG PRO 7.7';
         document.body.appendChild(div);
     }
 
@@ -534,6 +535,13 @@ class BrandApp {
             }
         };
         reader.readAsDataURL(file);
+    }
+
+    handleAIResponseText(text) {
+        if (!text) return;
+        // Clean [[MATRIX:...]] from display text
+        const cleanText = text.replace(/\[\[MATRIX:[\s\S]*?\]\]/g, '').trim();
+        if (cleanText) this.addMessage(cleanText, 'ai');
     }
 
     handleExport() { this.generateBrandPDF(); }

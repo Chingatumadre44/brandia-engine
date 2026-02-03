@@ -107,14 +107,74 @@
                 </div>
             </header>
 
-            <section class="workspace-v76">
-                <!-- Hero Section: Brand Board at the TOP (Full Width) -->
+            <section class="workspace-v77">
+                <!-- Dual Column Layout for Controls (Upper Rank) -->
+                <div class="grid-v76 mb-8">
+                    <!-- Column 1: Discovery & Chat (7 Units) - PROMINENT -->
+                    <div class="col-chat lg:col-span-7 col-span-12">
+                        <div class="card chat-card">
+                            <div class="card-header">
+                                <h3><i data-lucide="message-square"></i> Asistente de Marca IA v7.7</h3>
+                            </div>
+                            <div class="chat-container" id="chat-messages">
+                                <div class="message ai">
+                                    ¡Hola! He refinado mi motor SVG. Ahora genero diseños elite con iniciales abstractas
+                                    y símbolos profesionales. ¿Qué marca crearemos hoy?
+                                </div>
+                            </div>
+
+                            <div class="chat-input-area border-t pt-4">
+                                <div class="flex items-center px-4 mb-2">
+                                    <textarea id="chat-input"
+                                        placeholder="Escribe tu visión de marca (ej: Logo minimalista para clínica dental)..."
+                                        rows="2"></textarea>
+                                    <button id="send-msg">
+                                        <i data-lucide="sparkles"></i>
+                                    </button>
+                                </div>
+                                <div class="upload-controls px-4 py-2 border-t mt-2 flex justify-between items-center">
+                                    <div id="drop-zone" class="drop-zone-mini-v77">
+                                        <input type="file" id="file-input" hidden accept="image/*">
+                                        <button id="btn-upload" class="btn-ghost-mini">Subir Logo Base
+                                            (Opcional)</button>
+                                    </div>
+                                    <div id="onboarding-stepper-v77" class="hidden">
+                                        <div class="stepper-container-mini">
+                                            <div class="step active" id="step-1">1</div>
+                                            <div class="step" id="step-2">2</div>
+                                            <div class="step" id="step-3">3</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Selection Matrix (5 Units) -->
+                    <div class="col-matrix lg:col-span-12 col-span-12">
+                        <div id="matrix-selection-area" class="hidden">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-xl font-bold text-slate-800 flex items-center">
+                                    <i data-lucide="layers" class="mr-2 text-[#1CB99C]"></i> Matriz de Selección
+                                </h2>
+                                <span class="bg-[#95E6D5] text-[#002A32] text-xs font-bold px-3 py-1 rounded-full">
+                                    5 Propuestas Elite
+                                </span>
+                            </div>
+                            <div id="matrix-options" class="matrix-container-grid">
+                                <!-- injected here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Section: Brand Board (Full Width) -->
                 <div class="hero-brand-section">
                     <div class="brand-board" id="brand-board">
                         <div class="board-header">
                             <div class="header-left">
                                 <h2><i data-lucide="layout"></i> Brand Board</h2>
-                                <p>Identidad Visual Estratégica [v7.6 Native SVG]</p>
+                                <p>Identidad Visual Estratégica [SVG PRO v7.7]</p>
                             </div>
                             <button class="btn-secondary" id="btn-export">
                                 <i data-lucide="download"></i> Exportar Brand Book (PDF)
@@ -137,7 +197,7 @@
                                         </div>
                                     </div>
                                     <div class="logo-box generated" id="logo-gen-container">
-                                        <span class="label">IA NATIVE SVG</span>
+                                        <span class="label">IA NATIVE SVG PRO</span>
                                         <div class="gen-status-overlay hidden" id="gen-status-overlay">
                                             <div class="mini-spinner"></div>
                                         </div>
@@ -162,71 +222,10 @@
                                 <div class="card-label">Tipografía Elite</div>
                                 <div class="font-preview">
                                     <h4 id="font-heading-name">Inter / Montserrat</h4>
-                                    <p id="font-preview-text">La voz visual de tu marca.</p>
+                                    <div id="font-specimen" class="text-3xl font-bold mt-4">BrandIA Style</div>
+                                    <p id="font-preview-text" class="text-sm text-slate-500 mt-2">La voz visual de tu
+                                        marca.</p>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Lower Section: Controls & Selection (Dual Column Grid) -->
-                <div class="grid-v76">
-                    <!-- Column 1: Discovery & Chat (5 Units) -->
-                    <div class="col-chat">
-                        <!-- v7.6 Cleaner Onboarding Stepper -->
-                        <div id="onboarding-container" class="mb-4 hidden">
-                            <div class="stepper-container">
-                                <div class="step active" id="step-1">1</div>
-                                <div class="step" id="step-2">2</div>
-                                <div class="step" id="step-3">3</div>
-                            </div>
-                        </div>
-
-                        <!-- Chat IA -->
-                        <div class="card chat-card">
-                            <div class="card-header">
-                                <h3><i data-lucide="message-square"></i> Asistente de Marca IA</h3>
-                            </div>
-                            <div class="chat-container" id="chat-messages">
-                                <div class="message ai">
-                                    ¡Hola! Soy el motor de diseño v7.6. Ahora genero **logos SVG nativos** con iniciales
-                                    y símbolos reales. ¿Empezamos?
-                                </div>
-                            </div>
-
-                            <!-- Subida de Logo & Vision -->
-                            <div class="chat-input-area border-t pt-4">
-                                <div class="upload-controls mb-4 px-4">
-                                    <div id="drop-zone" class="drop-zone-mini">
-                                        <span id="upload-hint">Logo base (opcional)</span>
-                                        <input type="file" id="file-input" hidden accept="image/*">
-                                        <button id="btn-upload" class="btn-secondary-mini">Subir</button>
-                                    </div>
-                                </div>
-                                <div class="flex items-center px-4 mb-2">
-                                    <textarea id="chat-input" placeholder="Escribe tu visión de marca..."
-                                        rows="1"></textarea>
-                                    <button id="send-msg">
-                                        <i data-lucide="sparkles"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Column 2: Selection Matrix (7 Units) -->
-                    <div class="col-matrix">
-                        <div id="matrix-selection-area" class="hidden">
-                            <div class="flex items-center justify-between mb-4">
-                                <h2 class="text-xl font-bold text-slate-800 flex items-center">
-                                    <i data-lucide="layers" class="mr-2 text-[#1CB99C]"></i> Matriz de Selección
-                                </h2>
-                                <span class="bg-[#95E6D5] text-[#002A32] text-xs font-bold px-3 py-1 rounded-full">
-                                    5 Propuestas SVG
-                                </span>
-                            </div>
-                            <div id="matrix-options" class="matrix-container">
-                                <!-- injected here -->
                             </div>
                         </div>
                     </div>
@@ -267,7 +266,7 @@
         </div>
     </div>
 
-    <script src="js/main.js?v=7.4"></script>
+    <script src="js/main.js?v=7.7"></script>
 </body>
 
 </html>
