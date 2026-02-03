@@ -101,7 +101,7 @@ class BrandApp {
                 badge.style.cssText = "font-size:10px; background:#D95486; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
                 footer.appendChild(badge);
             }
-            badge.innerText = "v7.8 [ELITE AGENCY FLOW]";
+            badge.innerText = "v7.9 [MULTI-BOARD PRO]";
         }
     }
 
@@ -179,27 +179,28 @@ class BrandApp {
 
         const isMatrixRequest = prompt === "GENERATE_MASTER_MATRIX";
 
-        const context = `Eres BrandIA v7.8 [ELITE AGENCY ENGINE]. Director Creativo experto.
+        const context = `Eres BrandIA v7.9 [MULTI-BOARD VISUAL ENGINE]. Estratega de Branding Pro.
         Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
         
-        OBJETIVO: El usuario busca un diseño de "Gallery Standards" (Estándares de Galería). 
-        Inspiración: Behance, Dribbble, Diseño Suizo, Minimalismo Bauhaus.
+        OBJETIVO: El usuario exige 5 BRAND BOARDS COMPLETOS con logos de "Gallery Standard".
+        IMPORTANTE: Ya NO usamos SVG. Generarás un PROMPT descriptivo para cada logo.
 
-        SI el usuario pide generar o el prompt es "GENERATE_MASTER_MATRIX", DEBES incluir EXACTAMENTE [[MATRIX: {"options": [
-            {"id": 0, "svg_code": "<svg ...>...</svg>", "palette": ["#...", ...6], "font": "GoogleFont", "icons": ["lucide-icon", ...6], "concept": "nombre breve"},
-            ... repite hasta 5 
-        ]}]] con 5 propuestas completas.
+        SI el usuario pide generar, DEBES incluir EXACTAMENTE [[MATRIX: {"options": [
+            {
+                "id": 0, 
+                "logo_prompt": "Detailed prompt for image AI (e.g. 'Minimalist luxury logo for a dental clinic, gold and white, high resolution, symmetrical') ",
+                "palette": ["#...", "#...", "#...", "#...", "#...", "#..."], 
+                "fonts": ["Heading Font Name", "Body Font Name"], 
+                "icons": ["lucide-icon-1", "lucide-icon-2", "lucide-icon-3", "lucide-icon-4", "lucide-icon-5", "lucide-icon-6"], 
+                "concept": "Nombre del Concepto"
+            },
+            ... repite hasta 5 propuestas ÚNICAS y contrastadas
+        ]}]]
         
-        LOGOS SVG ELITE (CRÍTICO):
-        1. NO hagas iniciales simples. Crea ISOTIPOS abstractos o MONOGRAMAS complejos y elegantes.
-        2. Usa formas geométricas puras (<path d="..." fill="url(#grad)" />).
-        3. INTEGRACIÓN: Las letras deben ser parte del icono, no solo texto debajo.
-        4. ESTILO: Minimalista pero con carácter (ej: Líneas finas, espaciado negativo, gradientes sutiles).
-        5. VIEWBOX obligatorio: "0 0 100 100".
-        6. COLOR: Usa combinaciones de lujo (Oro y Negro, Menta y Gris Espacial, etc.).
-        
-        PALETA: 6 colores (Base, Acento, Sombras, Texto).
-        FUENTES: Pares premium (Sans Serif modernas o Serif elegantes).`;
+        LOGOS (IMAGEN): Describe el logo ideal: Estilo, elementos, colores, atmósfera. Sin texto si es posible para evitar errores de IA de imagen.
+        PALETA: 6 colores armoniosos de alta gama.
+        FUENTES: 2 fuentes complementarias de Google Fonts (Header/Body).
+        ICONOS: 6 nombres de Lucide Icons.`;
 
         const contents = [
             { role: 'user', parts: [{ text: `DIRECTRIZ SISTEMA: ${context}` }] },
@@ -248,11 +249,10 @@ class BrandApp {
         }
     }
 
-    handleMatrixData(data) {
+    async handleMatrixData(data) {
         if (!data || !data.options) return;
         this.brandOptions = data.options;
 
-        // Reveal results in v7.8
         const matrixArea = document.getElementById('matrix-selection-area');
         const boardHero = document.getElementById('brand-board-hero');
 
@@ -265,8 +265,10 @@ class BrandApp {
             boardHero.style.animation = "fadeInScale 1s ease-out forwards";
         }
 
+        // Generate images for all options early
+        this.updateStatus("Generando Visuales v7.9...", "warn");
         this.renderMatrix();
-        this.applyOption(0); // Auto-apply the first elite option
+        this.applyOption(0);
     }
 
     renderMatrix() {
@@ -275,27 +277,39 @@ class BrandApp {
 
         this.brandOptions.forEach((opt, idx) => {
             const card = document.createElement('div');
-            card.className = `matrix-option ${this.selectedOptionIndex === idx ? 'active' : ''}`;
+            card.className = `identity-card-v79 ${this.selectedOptionIndex === idx ? 'active' : ''}`;
             card.onclick = () => this.applyOption(idx);
 
+            // Using Pollinations for instant image preview based on prompt
+            const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(opt.logo_prompt)}?width=400&height=400&model=flux&nologo=true`;
+
             card.innerHTML = `
-                <div class="option-num">${idx + 1}</div>
-                <div class="matrix-logo-preview">
-                    ${opt.svg_code}
+                <div class="card-logo-preview-v79">
+                    <img src="${imageUrl}" alt="Brand Preview">
                 </div>
-                <div class="text-center mb-2">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${opt.concept || 'Concepto'}</span>
+                <div class="text-center">
+                    <div class="text-[10px] font-black text-[#D95486] uppercase tracking-tighter">${opt.concept}</div>
                 </div>
-                <div class="matrix-assets-summary">
-                    ${opt.palette.slice(0, 3).map(c => `<div class="dot-color" style="background:${c}"></div>`).join('')}
+                <div class="card-palette-v79">
+                    ${opt.palette.slice(0, 6).map(c => `<div class="dot" style="background:${c}"></div>`).join('')}
                 </div>
-                <div class="mt-3 flex justify-center gap-1">
-                    <button onclick="event.stopPropagation(); app.selectAsset('logo', ${idx})" class="mixer-btn ${this.currentSelections.logo === idx ? 'active' : ''}">Logo</button>
-                    <button onclick="event.stopPropagation(); app.selectAsset('colors', ${idx})" class="mixer-btn ${this.currentSelections.colors === idx ? 'active' : ''}">Color</button>
+                <div class="card-icons-v79 mt-2 flex justify-center gap-2 text-slate-400">
+                    ${opt.icons.slice(0, 4).map(i => `<i data-lucide="${i}" class="w-3 h-3"></i>`).join('')}
+                </div>
+                <div class="card-fonts-v79">
+                    ${opt.fonts[0]} / ${opt.fonts[1]}
+                </div>
+                <div class="card-mixer-controls">
+                    <button onclick="event.stopPropagation(); app.selectAsset('logo', ${idx})" class="mixer-btn-v79 ${this.currentSelections.logo === idx ? 'active' : ''}">Logo</button>
+                    <button onclick="event.stopPropagation(); app.selectAsset('colors', ${idx})" class="mixer-btn-v79 ${this.currentSelections.colors === idx ? 'active' : ''}">Colores</button>
+                    <button onclick="event.stopPropagation(); app.selectAsset('fonts', ${idx})" class="mixer-btn-v79 ${this.currentSelections.fonts === idx ? 'active' : ''}">Fuentes</button>
+                    <button onclick="event.stopPropagation(); app.selectAsset('icons', ${idx})" class="mixer-btn-v79 ${this.currentSelections.icons === idx ? 'active' : ''}">Iconos</button>
                 </div>
             `;
             this.matrixContainer.appendChild(card);
         });
+
+        if (window.lucide) window.lucide.createIcons();
     }
 
     applyOption(idx) {
@@ -319,21 +333,22 @@ class BrandApp {
         const fontOpt = this.brandOptions[this.currentSelections.fonts];
         const iconOpt = this.brandOptions[this.currentSelections.icons];
 
-        // Update Logo SVG Native v7.6
+        // Update Logo Image v7.9
         const genBox = document.getElementById('generated-logo');
         const placeholder = document.getElementById('logo-placeholder');
         if (genBox) {
-            genBox.innerHTML = logoOpt.svg_code;
+            const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(logoOpt.logo_prompt)}?width=800&height=800&model=flux&nologo=true`;
+            genBox.innerHTML = `<img src="${imageUrl}" class="shadow-lg hover:scale-105 transition-transform duration-500">`;
             genBox.classList.remove('hidden');
-            genBox.onclick = () => this.openEliteViewer(logoOpt.svg_code, true);
+            genBox.onclick = () => this.openEliteViewer(`<img src="${imageUrl}" style="max-width:90vmin">`, false);
         }
         if (placeholder) placeholder.classList.add('hidden');
 
         // Update Colors
         this.updateUIWithAIConfig({ palette: colorOpt.palette });
 
-        // Update Fonts
-        this.updateUIWithAIConfig({ font: fontOpt.font });
+        // Update Fonts (First of the array is Heading, second is Body)
+        this.updateUIWithAIConfig({ font: fontOpt.fonts[0] });
 
         // Update Icons
         this.updateUIWithAIConfig({ icons: iconOpt.icons });
