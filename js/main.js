@@ -101,7 +101,7 @@ class BrandApp {
                 badge.style.cssText = "font-size:10px; background:#D95486; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
                 footer.appendChild(badge);
             }
-            badge.innerText = "v8.0 [GALERÍA DE MARCAS PRO]";
+            badge.innerText = "v8.1 [PENTÁGONO CREATIVO]";
         }
     }
 
@@ -179,19 +179,19 @@ class BrandApp {
 
         const isMatrixRequest = prompt === "GENERATE_MASTER_MATRIX";
 
-        const context = `Eres BrandIA v8.0 [GALLERY AGENCY ENGINE]. Estratega de Branding Maestro.
+        const context = `Eres BrandIA v8.1 [PENTÁGONO CREATIVO]. Estratega de Branding Supremo.
         Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
         
-        OBJETIVO: El usuario busca 5 PROPUESTAS DE MARCA COMPLETAS (Brand Boards).
-        CADA PROPUESTA (Total 5) DEBE INCLUIR:
-        1. LOGO_PROMPT: Un prompt descriptivo, artístico y sin texto (absolutamente SIN LETRAS). Ejemplo: "Geometric lion head, luxury gold lines on silk black background, symmetrical art deco style".
-        2. PALETA: 6 colores armoniosos.
+        OBJETIVO: Generar 5 PROPUESTAS DE MARCA ÍNTEGRAS (Brand Boards 360°).
+        CADA PROPUESTA DEBE INCLUIR:
+        1. LOGO_PROMPT: Prompt artístico en INGLES, descriptivo, SIN TEXTO. (Ej: "Minimalist abstract lotus flower, gold and deep teal, professional vector style, symmetrical").
+        2. PALETA: 6 colores lujosos coordinados.
         3. FUENTES: 2 nombres de Google Fonts (Heading, Body).
-        4. ICONOS: 6 nombres de Lucide Icons que complementen la marca.
+        4. ICONOS: 6 nombres de Lucide Icons consistentes.
         5. CONCEPTO: Nombre evocador.
 
-        SI el usuario pide generar, DEBES responder con [[MATRIX: {"options": [ ... 5 items ... ]}]]
-        IMPORTANTE: Los prompts de imagen NO deben contener caracteres como #, %, \", o saltos de línea. Solo texto plano y descriptivo.`;
+        RESPONDER SIEMPRE CON [[MATRIX: {"options": [ ... 5 items ... ]}]]
+        IMPORTANTE: Los prompts de imagen deben ser limpios, sin caracteres especiales (#, %, etc.) ni saltos de línea.`;
 
         const contents = [
             { role: 'user', parts: [{ text: `DIRECTRIZ SISTEMA: ${context}` }] },
@@ -267,34 +267,51 @@ class BrandApp {
         this.matrixContainer.innerHTML = '';
 
         this.brandOptions.forEach((opt, idx) => {
-            const card = document.createElement('div');
-            card.className = `mini-brand-board ${this.selectedOptionIndex === idx ? 'active' : ''}`;
-            card.onclick = () => this.applyOption(idx);
+            const board = document.createElement('div');
+            board.className = `mini-brand-board ${this.selectedOptionIndex === idx ? 'active' : ''}`;
 
-            // Flux Image Engine v8.0 - Perfect Sanitization
+            // Image Engine Stability Fix v8.1
             const safePrompt = opt.logo_prompt.replace(/[^a-zA-Z0-9\s,]/g, '').trim();
             const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(safePrompt)}?width=400&height=400&model=flux&nologo=true&seed=${idx + 123}`;
 
-            card.innerHTML = `
-                <div class="mini-board-header-badge">${opt.concept}</div>
-                <div class="mini-board-logo">
-                    <img src="${imageUrl}" alt="Option ${idx + 1}" onerror="this.src='https://placehold.co/400x400/f8fafc/D95486?text=Cargando...'">
+            board.innerHTML = `
+                <div class="board-mini-header" onclick="app.applyOption(${idx})">
+                    <span class="badge-idx">PROPUESTA ${idx + 1}</span>
+                    <h3 class="mini-brand-title">${opt.concept}</h3>
+                    <button class="btn-use-board">Cargar Identidad Completa</button>
                 </div>
-                <div class="mini-board-palette">
-                    ${opt.palette.slice(0, 6).map(c => `<div class="swatch" style="background:${c}"></div>`).join('')}
-                </div>
-                <div class="mini-board-fonts">${opt.fonts[0]} / ${opt.fonts[1]}</div>
-                <div class="mini-board-icons">
-                    ${opt.icons.slice(0, 6).map(i => `<i data-lucide="${i}"></i>`).join('')}
-                </div>
-                <div class="mini-board-mixer">
-                    <button onclick="event.stopPropagation(); app.selectAsset('logo', ${idx})" class="mini-mixer-btn ${this.currentSelections.logo === idx ? 'active' : ''}">Logo</button>
-                    <button onclick="event.stopPropagation(); app.selectAsset('colors', ${idx})" class="mini-mixer-btn ${this.currentSelections.colors === idx ? 'active' : ''}">Colores</button>
-                    <button onclick="event.stopPropagation(); app.selectAsset('fonts', ${idx})" class="mini-mixer-btn ${this.currentSelections.fonts === idx ? 'active' : ''}">Fuentes</button>
-                    <button onclick="event.stopPropagation(); app.selectAsset('icons', ${idx})" class="mini-mixer-btn ${this.currentSelections.icons === idx ? 'active' : ''}">Iconos</button>
+                
+                <div class="mini-board-grid">
+                    <div class="mini-section logo-sub">
+                        <div class="mini-label">Logotipo Conceptualmente</div>
+                        <img src="${imageUrl}" class="mini-logo-img" onerror="this.src='https://placehold.co/400x400/f8fafc/D95486?text=IA+Cargando...'">
+                        <button class="btn-mixer-mini" onclick="app.selectAsset('logo', ${idx})">Usar Logo</button>
+                    </div>
+                    
+                    <div class="mini-section color-sub">
+                        <div class="mini-label">Paleta</div>
+                        <div class="mini-palette-grid">
+                            ${opt.palette.map(c => `<div class="mini-swatch" style="background:${c}"></div>`).join('')}
+                        </div>
+                        <button class="btn-mixer-mini" onclick="app.selectAsset('colors', ${idx})">Usar Colores</button>
+                    </div>
+                    
+                    <div class="mini-section font-sub">
+                        <div class="mini-label">Tipografía</div>
+                        <div class="mini-font-name">${opt.fonts[0]}</div>
+                        <button class="btn-mixer-mini" onclick="app.selectAsset('fonts', ${idx})">Usar Fuente</button>
+                    </div>
+                    
+                    <div class="mini-section icon-sub">
+                        <div class="mini-label">Iconos</div>
+                        <div class="mini-icon-strip">
+                            ${opt.icons.slice(0, 4).map(i => `<i data-lucide="${i}"></i>`).join('')}
+                        </div>
+                        <button class="btn-mixer-mini" onclick="app.selectAsset('icons', ${idx})">Usar Iconos</button>
+                    </div>
                 </div>
             `;
-            this.matrixContainer.appendChild(card);
+            this.matrixContainer.appendChild(board);
         });
 
         if (window.lucide) window.lucide.createIcons();
@@ -321,12 +338,13 @@ class BrandApp {
         const fontOpt = this.brandOptions[this.currentSelections.fonts];
         const iconOpt = this.brandOptions[this.currentSelections.icons];
 
-        // Update Logo Image v7.9
+        // Update Logo Image v8.1 (Sanitized)
         const genBox = document.getElementById('generated-logo');
         const placeholder = document.getElementById('logo-placeholder');
         if (genBox) {
-            const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(logoOpt.logo_prompt)}?width=800&height=800&model=flux&nologo=true`;
-            genBox.innerHTML = `<img src="${imageUrl}" class="shadow-lg hover:scale-105 transition-transform duration-500">`;
+            const safePrompt = logoOpt.logo_prompt.replace(/[^a-zA-Z0-9\s,]/g, '').trim();
+            const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(safePrompt)}?width=800&height=800&model=flux&nologo=true&seed=${this.currentSelections.logo + 123}`;
+            genBox.innerHTML = `<img src="${imageUrl}" class="shadow-lg hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/800x800/f8fafc/D95486?text=IA+Cargando...'">`;
             genBox.classList.remove('hidden');
             genBox.onclick = () => this.openEliteViewer(`<img src="${imageUrl}" style="max-width:90vmin">`, false);
         }
