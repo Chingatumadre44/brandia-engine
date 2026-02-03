@@ -101,7 +101,7 @@ class BrandApp {
                 badge.style.cssText = "font-size:10px; background:#D95486; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
                 footer.appendChild(badge);
             }
-            badge.innerText = "v7.4 [QUICK SELECTION MATRIX]";
+            badge.innerText = "v7.6 [NATIVE SVG ENGINE]";
         }
     }
 
@@ -171,16 +171,22 @@ class BrandApp {
 
         const isMatrixRequest = prompt === "GENERATE_MASTER_MATRIX";
 
-        const context = `Eres BrandIA v7.4 [QUICK SELECTION MATRIX]. Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
+        const context = `Eres BrandIA v7.6 [NATIVE SVG ENGINE]. Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
         ${isMatrixRequest ? 'DEBES GENERAR 5 PROPUESTAS COMPLETAS DE BRANDING.' : 'Responde al usuario y actualiza la selección.'}
         
         FORMATO OBLIGATORIO JSON PARA MATRIZ:
         SI es una generación de marca, DEBES incluir [[MATRIX: {"options": [
-            {"id": 0, "logo_prompt": "descriptivo", "palette": ["#...", ...6], "font": "GoogleFont", "icons": ["lucide-icon", ...6], "concept": "nombre breve"},
-            ... repite hasta 5
+            {"id": 0, "svg_code": "<svg ...>...</svg>", "palette": ["#...", ...6], "font": "GoogleFont", "icons": ["lucide-icon", ...6], "concept": "nombre breve"},
+            ... repite hasta 5 
         ]}]]
         
-        LOS LOGOS: Usa DiceBear "initials" o "shapes". Genera un SEED único y descriptivo para cada uno.
+        LOS LOGOS: NO USES APIS EXTERNAS. ESCRIBE EL CÓDIGO <svg> DIRECTAMENTE.
+        REQUISITOS SVG: 
+        1. Minimalista, moderno, corporativo.
+        2. INCLUYE las iniciales del usuario (${this.userData.name}) de forma elegante si es apropiado.
+        3. Agrega un símbolo geométrico/icónico relacionado con el sector (${this.userData.profession}).
+        4. Usa viewBox="0 0 100 100" y asegura que sea escalable.
+        
         LAS FUENTES: Sugiere pares (Headers y Body). 
         COLORES: Paletas de 6 colores armoniosos.`;
 
@@ -252,14 +258,10 @@ class BrandApp {
             card.className = `matrix-option ${this.selectedOptionIndex === idx ? 'active' : ''}`;
             card.onclick = () => this.applyOption(idx);
 
-            const seed = opt.logo_prompt.replace(/\s+/g, '-');
-            const style = opt.logo_prompt.length < 15 ? 'initials' : 'shapes';
-            const logoUrl = `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(seed)}&backgroundColor=ffffff`;
-
             card.innerHTML = `
                 <div class="option-num">${idx + 1}</div>
                 <div class="matrix-logo-preview">
-                    <img src="${logoUrl}" alt="Option ${idx}">
+                    ${opt.svg_code}
                 </div>
                 <div class="text-center mb-2">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${opt.concept || 'Concepto'}</span>
@@ -297,15 +299,13 @@ class BrandApp {
         const fontOpt = this.brandOptions[this.currentSelections.fonts];
         const iconOpt = this.brandOptions[this.currentSelections.icons];
 
-        // Update Logo
-        const style = logoOpt.logo_prompt.length < 15 ? 'initials' : 'shapes';
-        const logoUrl = `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(logoOpt.logo_prompt.replace(/\s+/g, '-'))}&backgroundColor=ffffff`;
-        const genImg = document.getElementById('generated-logo');
+        // Update Logo SVG Native v7.6
+        const genBox = document.getElementById('generated-logo');
         const placeholder = document.getElementById('logo-placeholder');
-        if (genImg) {
-            genImg.src = logoUrl;
-            genImg.classList.remove('hidden');
-            genImg.onclick = () => this.openEliteViewer(logoUrl);
+        if (genBox) {
+            genBox.innerHTML = logoOpt.svg_code;
+            genBox.classList.remove('hidden');
+            genBox.onclick = () => this.openEliteViewer(logoOpt.svg_code, true);
         }
         if (placeholder) placeholder.classList.add('hidden');
 
@@ -461,19 +461,29 @@ class BrandApp {
         doc.setFontSize(16);
         doc.text("3. Concepto Visual", 20, 170);
         doc.setFontSize(10);
-        const concept = this.brandOptions[this.currentSelections.logo].logo_prompt;
+        const concept = this.brandOptions[this.currentSelections.logo].concept || "Branding generado con motor SVG nativo v7.6.";
         doc.text(doc.splitTextToSize(concept, 170), 20, 180);
 
         doc.save(`${this.userData.name}_BrandBook.pdf`);
         this.updateStatus("PDF Descargado", "success");
     }
 
-    openEliteViewer(src) {
+    openEliteViewer(content, isSvg = false) {
         if (!this.eliteViewer) return;
         this.eliteViewer.classList.add('active');
         const container = document.getElementById('viewer-logo-container');
         if (container) {
-            container.innerHTML = `<img src="${src}" class="viewer-image">`;
+            if (isSvg) {
+                container.innerHTML = content;
+                // Ensure SVG in modal is visible and scaled
+                const svg = container.querySelector('svg');
+                if (svg) {
+                    svg.style.width = "300px";
+                    svg.style.height = "300px";
+                }
+            } else {
+                container.innerHTML = `<img src="${content}" class="viewer-image">`;
+            }
         }
         const name = document.getElementById('viewer-brand-name');
         if (name) name.innerText = this.userData.name;
@@ -488,7 +498,7 @@ class BrandApp {
         const div = document.createElement('div');
         div.id = 'stability-status';
         div.style.cssText = "position:fixed; bottom:10px; right:10px; background:#002A32; color:white; padding:5px 15px; border-radius:25px; font-size:11px; z-index:1000000; font-family:'Space Mono'; border:1px solid #D95486;";
-        div.innerHTML = '🟢 Engine Selection Matrix 7.4';
+        div.innerHTML = '🟢 Engine Native SVG 7.6';
         document.body.appendChild(div);
     }
 
