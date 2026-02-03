@@ -101,7 +101,7 @@ class BrandApp {
                 badge.style.cssText = "font-size:10px; background:#D95486; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
                 footer.appendChild(badge);
             }
-            badge.innerText = "v7.9 [MULTI-BOARD PRO]";
+            badge.innerText = "v8.0 [GALERÍA DE MARCAS PRO]";
         }
     }
 
@@ -179,33 +179,19 @@ class BrandApp {
 
         const isMatrixRequest = prompt === "GENERATE_MASTER_MATRIX";
 
-        const context = `Eres BrandIA v7.9.1 [AGENCY VISUAL ENGINE]. Estratega de Branding Pro.
+        const context = `Eres BrandIA v8.0 [GALLERY AGENCY ENGINE]. Estratega de Branding Maestro.
         Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
         
-        OBJETIVO: El usuario exige 5 BRAND BOARDS COMPLETOS.
-        IMPORTANTE: Los logos son imágenes. Generarás un PROMPT descriptivo para cada logo.
-        
-        REGLA DE ORO PROMPTS: 
-        - NUNCA incluyas texto o letras dentro del logotipo (la IA de imagen falla en ortografía).
-        - Usa metáforas visuales potentes (ej: "Abstract phoenix rising, luxury minimalist, sharp lines").
-        - Describe materiales y acabados (Oro cepillado, Vidrio esmerilado, etc.).
-        - SOLO USA CARACTERES COMPATIBLES CON URL (Evita comillas, #, %, etc. en el prompt).
+        OBJETIVO: El usuario busca 5 PROPUESTAS DE MARCA COMPLETAS (Brand Boards).
+        CADA PROPUESTA (Total 5) DEBE INCLUIR:
+        1. LOGO_PROMPT: Un prompt descriptivo, artístico y sin texto (absolutamente SIN LETRAS). Ejemplo: "Geometric lion head, luxury gold lines on silk black background, symmetrical art deco style".
+        2. PALETA: 6 colores armoniosos.
+        3. FUENTES: 2 nombres de Google Fonts (Heading, Body).
+        4. ICONOS: 6 nombres de Lucide Icons que complementen la marca.
+        5. CONCEPTO: Nombre evocador.
 
-        SI el usuario pide generar, DEBES incluir EXACTAMENTE [[MATRIX: {"options": [
-            {
-                "id": 0, 
-                "logo_prompt": "Clean descriptive prompt without special characters",
-                "palette": ["#...", "#...", "#...", "#...", "#...", "#..."], 
-                "fonts": ["Heading Font", "Body Font"], 
-                "icons": ["lucide-icon-1", "lucide-icon-2", "lucide-icon-3", "lucide-icon-4", "lucide-icon-5", "lucide-icon-6"], 
-                "concept": "Concept Name"
-            },
-            ... repite hasta 5 propuestas ÚNICAS
-        ]}]]
-        
-        PALETA: 6 colores lujosos.
-        FUENTES: 2 fuentes de Google Fonts.
-        ICONOS: 6 nombres reales de Lucide Icons.`;
+        SI el usuario pide generar, DEBES responder con [[MATRIX: {"options": [ ... 5 items ... ]}]]
+        IMPORTANTE: Los prompts de imagen NO deben contener caracteres como #, %, \", o saltos de línea. Solo texto plano y descriptivo.`;
 
         const contents = [
             { role: 'user', parts: [{ text: `DIRECTRIZ SISTEMA: ${context}` }] },
@@ -282,36 +268,30 @@ class BrandApp {
 
         this.brandOptions.forEach((opt, idx) => {
             const card = document.createElement('div');
-            card.className = `identity-card-v79 ${this.selectedOptionIndex === idx ? 'active' : ''}`;
+            card.className = `mini-brand-board ${this.selectedOptionIndex === idx ? 'active' : ''}`;
             card.onclick = () => this.applyOption(idx);
 
-            // Sanitize prompt for URL
-            const cleanPrompt = opt.logo_prompt.replace(/[^a-zA-Z0-9\s,]/g, '').trim();
-            const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(cleanPrompt)}?width=400&height=400&model=flux&nologo=true&seed=${idx + 777}`;
+            // Flux Image Engine v8.0 - Perfect Sanitization
+            const safePrompt = opt.logo_prompt.replace(/[^a-zA-Z0-9\s,]/g, '').trim();
+            const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(safePrompt)}?width=400&height=400&model=flux&nologo=true&seed=${idx + 123}`;
 
             card.innerHTML = `
-                <div class="mini-board-wrapper">
-                    <div class="mini-board-header">
-                        <div class="mini-logo-area">
-                            <img src="${imageUrl}" alt="Logo Preview" onerror="this.src='https://placehold.co/400x400/f8fafc/D95486?text=Cargando+Propuesta'">
-                        </div>
-                    </div>
-                    <div class="mini-board-content">
-                        <div class="mini-concept-name">${opt.concept}</div>
-                        <div class="mini-palette">
-                            ${opt.palette.slice(0, 6).map(c => `<div class="mini-dot" style="background:${c}"></div>`).join('')}
-                        </div>
-                        <div class="mini-icons">
-                            ${opt.icons.slice(0, 6).map(i => `<i data-lucide="${i}"></i>`).join('')}
-                        </div>
-                        <div class="mini-fonts-strip">${opt.fonts[0]} / ${opt.fonts[1]}</div>
-                    </div>
-                    <div class="card-mixer-controls-v791 mt-4">
-                        <button onclick="event.stopPropagation(); app.selectAsset('logo', ${idx})" class="mixer-btn-v791 ${this.currentSelections.logo === idx ? 'active' : ''}">Logo</button>
-                        <button onclick="event.stopPropagation(); app.selectAsset('colors', ${idx})" class="mixer-btn-v791 ${this.currentSelections.colors === idx ? 'active' : ''}">Colores</button>
-                        <button onclick="event.stopPropagation(); app.selectAsset('fonts', ${idx})" class="mixer-btn-v791 ${this.currentSelections.fonts === idx ? 'active' : ''}">Fuentes</button>
-                        <button onclick="event.stopPropagation(); app.selectAsset('icons', ${idx})" class="mixer-btn-v791 ${this.currentSelections.icons === idx ? 'active' : ''}">Iconos</button>
-                    </div>
+                <div class="mini-board-header-badge">${opt.concept}</div>
+                <div class="mini-board-logo">
+                    <img src="${imageUrl}" alt="Option ${idx + 1}" onerror="this.src='https://placehold.co/400x400/f8fafc/D95486?text=Cargando...'">
+                </div>
+                <div class="mini-board-palette">
+                    ${opt.palette.slice(0, 6).map(c => `<div class="swatch" style="background:${c}"></div>`).join('')}
+                </div>
+                <div class="mini-board-fonts">${opt.fonts[0]} / ${opt.fonts[1]}</div>
+                <div class="mini-board-icons">
+                    ${opt.icons.slice(0, 6).map(i => `<i data-lucide="${i}"></i>`).join('')}
+                </div>
+                <div class="mini-board-mixer">
+                    <button onclick="event.stopPropagation(); app.selectAsset('logo', ${idx})" class="mini-mixer-btn ${this.currentSelections.logo === idx ? 'active' : ''}">Logo</button>
+                    <button onclick="event.stopPropagation(); app.selectAsset('colors', ${idx})" class="mini-mixer-btn ${this.currentSelections.colors === idx ? 'active' : ''}">Colores</button>
+                    <button onclick="event.stopPropagation(); app.selectAsset('fonts', ${idx})" class="mini-mixer-btn ${this.currentSelections.fonts === idx ? 'active' : ''}">Fuentes</button>
+                    <button onclick="event.stopPropagation(); app.selectAsset('icons', ${idx})" class="mini-mixer-btn ${this.currentSelections.icons === idx ? 'active' : ''}">Iconos</button>
                 </div>
             `;
             this.matrixContainer.appendChild(card);
