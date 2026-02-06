@@ -35,9 +35,11 @@ const generateImages = async (conceptId, logoPrompt, iconSetPrompt) => {
         // Guardamos el logo localmente
         const logoFileName = `logo_${conceptId}_${Date.now()}.png`;
         const logoSavedPath = saveImageLocally(logoResponse, logoFileName);
-        const logoUrl = `/uploads/${logoFileName}`;
 
-        // Pausa de seguridad (Rate Limit)
+        // Si no se pudo guardar (fallback), usamos una URL de placeholder pero informamos
+        const logoUrl = logoSavedPath ? `/uploads/${logoFileName}` : 'https://placehold.co/600x600?text=Logo+Concept';
+
+        // Pausa de seguridad (Rate Limit) para no saturar la API
         await new Promise(resolve => setTimeout(resolve, 3000));
 
         // 2. Generación del Set de Iconos
@@ -48,26 +50,19 @@ const generateImages = async (conceptId, logoPrompt, iconSetPrompt) => {
         // Guardamos el set de iconos localmente
         const iconsFileName = `icons_${conceptId}_${Date.now()}.png`;
         const iconsSavedPath = saveImageLocally(iconResponse, iconsFileName);
-        const iconsUrl = `/uploads/${iconsFileName}`;
+        const iconsUrl = iconsSavedPath ? `/uploads/${iconsFileName}` : 'https://placehold.co/800x600?text=Icon+Set';
 
         console.log(`[ImageService] Proceso completado. Archivos guardados en ${UPLOADS_DIR}`);
 
-        // Construimos la respuesta con URLs accesibles (asumiendo que el frontend conoce la base URL)
-        // Opcionalmente podemos prependeer el dominio si es necesario
         const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
 
         return {
             conceptId,
             logo: {
-                url: `${baseUrl}${logoUrl}`
+                url: logoUrl.startsWith('http') ? logoUrl : `${baseUrl}${logoUrl}`
             },
             icons: [
-                { name: "set_completo", url: `${baseUrl}${iconsUrl}` },
-                { name: "item_1", url: `${baseUrl}${iconsUrl}` },
-                { name: "item_2", url: `${baseUrl}${iconsUrl}` },
-                { name: "item_3", url: `${baseUrl}${iconsUrl}` },
-                { name: "item_4", url: `${baseUrl}${iconsUrl}` },
-                { name: "item_5", url: `${baseUrl}${iconsUrl}` }
+                { name: "Brand Identity Set", url: iconsUrl.startsWith('http') ? iconsUrl : `${baseUrl}${iconsUrl}` }
             ]
         };
 
@@ -82,15 +77,15 @@ const generateImages = async (conceptId, logoPrompt, iconSetPrompt) => {
  */
 function saveImageLocally(response, fileName) {
     try {
-        // La API de Gemini devuelve imágenes en parts[0].inlineData
+        // En la API de @google/generative-ai para Imagen 3, el resultado viene en parts
         const candidate = response.candidates[0];
         const part = candidate.content.parts[0];
 
-        if (part.inlineData) {
+        // Verificamos si hay inlineData (esto es lo usual para entrega de buffer/base64)
+        if (part.inlineData && part.inlineData.data) {
             const buffer = Buffer.from(part.inlineData.data, 'base64');
             const fullPath = path.join(UPLOADS_DIR, fileName);
 
-            // Aseguramos que el directorio existe
             if (!fs.existsSync(UPLOADS_DIR)) {
                 fs.mkdirSync(UPLOADS_DIR, { recursive: true });
             }
@@ -99,10 +94,9 @@ function saveImageLocally(response, fileName) {
             return fullPath;
         }
 
-        // Si por alguna razón no hay inlineData, devolvemos un error controlado
         throw new Error('No se recibió data de imagen (base64) de la API');
     } catch (e) {
-        console.warn('[ImageService] Error guardando archivo, usando fallback de simulación:', e.message);
+        console.warn('[ImageService] Error guardando archivo local:', e.message);
         return null;
     }
 }

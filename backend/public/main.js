@@ -238,17 +238,78 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = `
             <div class="prompt-group">
                 <h4>🎨 Prompt para Logotipo</h4>
-                <div class="prompt-box">${prompts.logoPrompt}</div>
+                <div class="prompt-box" id="logo-prompt-text">${prompts.logoPrompt}</div>
             </div>
 
             <div class="prompt-group">
                 <h4>📐 Prompt para Set de Iconos</h4>
-                <div class="prompt-box">${prompts.iconSetPrompt}</div>
+                <div class="prompt-box" id="icons-prompt-text">${prompts.iconSetPrompt}</div>
             </div>
 
             <div class="prompt-group">
                 <h4>📝 Prompt para Guía de Estilo</h4>
                 <div class="prompt-box">${prompts.styleGuidePrompt}</div>
+            </div>
+
+            <button id="btn-assets" class="btn-primary" style="margin-top: 1rem; background: linear-gradient(135deg, #FFD700, #DAA520); color: #000;">
+                ✨ Generar Identidad Visual Final
+            </button>
+        `;
+
+        document.getElementById('btn-assets').addEventListener('click', () => handleGenerateImages(prompts));
+    }
+
+    async function handleGenerateImages(prompts) {
+        const btn = document.getElementById('btn-assets');
+        btn.disabled = true;
+        btn.textContent = 'Dibujando tu marca con Imagen 3...';
+
+        try {
+            const body = {
+                conceptId: prompts.conceptId,
+                logoPrompt: prompts.logoPrompt,
+                iconSetPrompt: prompts.iconSetPrompt
+            };
+
+            const response = await fetch(`${API_PATH}/images`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            if (!response.ok) throw new Error('Error en Generación Visual');
+
+            const data = await response.json();
+            renderAssets(data.visualAssets);
+
+            const assetsSection = document.getElementById('assets-section');
+            assetsSection.classList.remove('hidden');
+            assetsSection.scrollIntoView({ behavior: 'smooth' });
+
+        } catch (error) {
+            console.error('Error Assets:', error);
+            alert('No se pudieron generar las imágenes. Revisa tu API Key de Gemini.');
+        } finally {
+            btn.textContent = 'Identidad Generada ✨';
+        }
+    }
+
+    function renderAssets(assets) {
+        const container = document.getElementById('assets-content');
+
+        container.innerHTML = `
+            <div class="asset-group">
+                <h4>Logotipo Principal</h4>
+                <div class="asset-display">
+                    <img src="${assets.logo.url}" alt="Logo Generado">
+                </div>
+            </div>
+
+            <div class="asset-group">
+                <h4>Set de Iconografía</h4>
+                <div class="asset-display">
+                    <img src="${assets.icons[0].url}" alt="Iconos Generados">
+                </div>
             </div>
         `;
     }
