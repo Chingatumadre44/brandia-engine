@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrandIA Engine | Dashboard de Identidad</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="logo">
+                <span class="sparkle">✨</span>
+                <h1>BrandIA <span class="version">v12.1</span></h1>
+            </div>
+            <p class="subtitle">Motor de Inteligencia de Marca & Identidad Visual</p>
+        </header>
+
+        <main class="content">
+            <section class="input-section">
+                <div class="card card-input">
+                    <label for="brand-idea">Define tu visión de marca</label>
+                    <p class="label-desc">Describe qué haces, para quién y qué quieres transmitir.</p>
+                    <textarea id="brand-idea"
+                        placeholder="Ej: Dra. Ana Teniente, endocrinóloga buscando transmitir cercanía y calidez a pacientes con diabetes tipo 1..."></textarea>
+                    <button id="btn-generate" class="btn-primary">
+                        <span class="btn-text">Generar Estrategia de Branding</span>
+                        <span class="loader hidden"></span>
+                    </button>
+                </div>
+            </section>
+
+            <section id="results-section" class="results-section hidden">
+                <div class="section-header">
+                    <h2>Conceptos Estratégicos</h2>
+                    <p>He analizado tu visión y generado 5 rutas de identidad profesional.</p>
+                </div>
+                <div id="concepts-grid" class="concepts-grid">
+                    <!-- Concept cards inserted here -->
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 BrandIA Engine. Todos los activos se generan mediante Gemini Imagen 3.</p>
+        </footer>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
