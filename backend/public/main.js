@@ -192,6 +192,63 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="info-label">Keywords del Estilo</span>
                     <div class="mood-tags">${keywordsHTML}</div>
                 </div>
+
+                <button id="btn-prompts" class="btn-primary" style="margin-top: 2rem;">
+                    Generar Prompts Visuales
+                </button>
+            </div>
+        `;
+
+        // Atar evento al botón recién creado
+        document.getElementById('btn-prompts').addEventListener('click', () => handleGeneratePrompts(ad));
+    }
+
+    async function handleGeneratePrompts(ad) {
+        const btn = document.getElementById('btn-prompts');
+        btn.disabled = true;
+        btn.textContent = 'Creando Ingeniería de Prompts...';
+
+        try {
+            const response = await fetch(`${API_PATH}/visual-prompts`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(ad)
+            });
+
+            if (!response.ok) throw new Error('Error en Generación de Prompts');
+
+            const data = await response.json();
+            renderPrompts(data.visualPrompts);
+
+            const promptSection = document.getElementById('prompts-section');
+            promptSection.classList.remove('hidden');
+            promptSection.scrollIntoView({ behavior: 'smooth' });
+
+        } catch (error) {
+            console.error('Error Prompts:', error);
+            alert('No se pudieron generar los prompts visuales.');
+        } finally {
+            btn.textContent = 'Prompts Generados';
+        }
+    }
+
+    function renderPrompts(prompts) {
+        const container = document.getElementById('prompts-content');
+
+        container.innerHTML = `
+            <div class="prompt-group">
+                <h4>🎨 Prompt para Logotipo</h4>
+                <div class="prompt-box">${prompts.logoPrompt}</div>
+            </div>
+
+            <div class="prompt-group">
+                <h4>📐 Prompt para Set de Iconos</h4>
+                <div class="prompt-box">${prompts.iconSetPrompt}</div>
+            </div>
+
+            <div class="prompt-group">
+                <h4>📝 Prompt para Guía de Estilo</h4>
+                <div class="prompt-box">${prompts.styleGuidePrompt}</div>
             </div>
         `;
     }

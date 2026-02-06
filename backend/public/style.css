@@ -141,11 +141,34 @@ textarea:focus {
     box-shadow: 0 15px 30px -10px rgba(138, 42, 130, 0.4);
 }
 
-.btn-primary:disabled {
-    opacity: 0.7;
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    margin-top: 1.5rem;
+    width: 100%;
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    padding: 0.8rem;
+    border-radius: 0.8rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-secondary:disabled {
+    opacity: 0.5;
     cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
+    border-color: var(--text-muted);
+    color: var(--text-muted);
 }
 
 /* Results */
@@ -200,11 +223,12 @@ textarea:focus {
 .concept-card .desc {
     font-size: 0.95rem;
     color: #475569;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.2rem;
+    flex-grow: 1;
 }
 
 .card-info {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.2rem;
 }
 
 .info-label {
@@ -214,7 +238,7 @@ textarea:focus {
     text-transform: uppercase;
     color: var(--text-muted);
     letter-spacing: 0.05em;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.2rem;
 }
 
 .info-val {
@@ -228,7 +252,99 @@ textarea:focus {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-top: auto;
+    margin-top: 0.5rem;
+}
+
+/* Art Direction Custom Layout */
+.art-direction-container {
+    background: white;
+    border-radius: 2rem;
+    padding: 3rem;
+    border: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 3rem;
+}
+
+.art-col h4 {
+    font-family: 'Outfit', sans-serif;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--bg-main);
+    padding-bottom: 0.5rem;
+}
+
+.color-palette {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.color-item {
+    text-align: center;
+}
+
+.swatch {
+    width: 60px;
+    height: 60px;
+    border-radius: 1rem;
+    margin-bottom: 0.5rem;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.color-hex {
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: monospace;
+}
+
+.font-preview {
+    margin-bottom: 1.5rem;
+}
+
+.font-preview .heading {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+}
+
+.font-preview .body {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+}
+
+.mood-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.mood-tag {
+    background: var(--primary);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.badge {
+    background: var(--accent);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+}
+
+@media (max-width: 900px) {
+    .art-direction-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 2rem;
+    }
 }
 
 .tag {
