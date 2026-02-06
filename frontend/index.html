@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrandIA Engine | AI Designer MVP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="logo">
+                <span class="sparkle">✨</span>
+                <h1>BrandIA <span class="version">v12</span></h1>
+            </div>
+            <p class="subtitle">Motor de Estrategia Visual e Identidad</p>
+        </header>
+
+        <main class="content">
+            <section class="input-section">
+                <div class="card card-input">
+                    <label for="brand-idea">Describe tu visión de marca</label>
+                    <textarea id="brand-idea"
+                        placeholder="Ej: Una clínica dental moderna que usa tecnología láser y busca transmitir calma y confianza..."></textarea>
+                    <button id="btn-generate" class="btn-primary">
+                        <span class="btn-text">Generar Branding</span>
+                        <span class="loader hidden"></span>
+                    </button>
+                </div>
+            </section>
+
+            <section id="results-section" class="results-section hidden">
+                <div class="section-header">
+                    <h2>Propuestas de Identidad</h2>
+                    <p>He generado 5 conceptos estratégicos para tu marca.</p>
+                </div>
+                <div id="concepts-grid" class="concepts-grid">
+                    <!-- Concept cards inserted here -->
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 BrandIA Engine Backend Project. Powered by Gemini.</p>
+        </footer>
+    </div>
+
+    <!-- Modal for details (optional enhancement) -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal">
+            <button id="modal-close">&times;</button>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
