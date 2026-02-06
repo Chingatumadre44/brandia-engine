@@ -21,6 +21,11 @@ const UPLOADS_DIR = path.join(__dirname, '../../public/uploads');
  * @returns {Promise<Object>} - El JSON con las URLs locales de las imágenes
  */
 const generateImages = async (conceptId, logoPrompt, iconSetPrompt) => {
+    // Validación en tiempo de ejecución
+    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'tu_clave_gemini_aqui') {
+        throw new Error('CONFIG_ERROR: La GEMINI_API_KEY no está configurada en el servidor. Por favor, edite su archivo .env.');
+    }
+
     try {
         console.log(`[ImageService] Iniciando generación con Gemini para: ${conceptId}`);
 
