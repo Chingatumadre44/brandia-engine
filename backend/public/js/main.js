@@ -115,7 +115,7 @@ class BrandApp {
                 badge.style.cssText = "font-size:10px; background:#D95486; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
                 footer.appendChild(badge);
             }
-            badge.innerText = "v8.5 [HYBRID ENGINE]";
+            badge.innerText = "v8.5.1 [ELIMINATING BLOCKERS]";
         }
     }
 
@@ -167,6 +167,7 @@ class BrandApp {
     startCreativeProcess() {
         this.addMessage(`¡Todo listo! Estoy orquestando <strong>5 propuestas de diseño exclusivas</strong> para <strong>${this.userData.name}</strong>. Esto tomará unos segundos de procesamiento neuronal...`, 'ai');
         this.aiTyping(async () => {
+            this.handleMatrixData({ options: [] }); // Show boards immediately (empty)
             await this.callGeminiAPI("GENERATE_MASTER_MATRIX");
         });
     }
@@ -270,6 +271,7 @@ class BrandApp {
             }
         } catch (err) {
             console.error("Critical Call Error:", err);
+            this.updateStatus("Fallback: Demo Mode", "warn");
             this.activateDemoMode();
         }
     }
@@ -320,20 +322,25 @@ class BrandApp {
     }
 
     async handleMatrixData(data) {
-        if (!data || !data.options) return;
-        this.brandOptions = data.options;
-
         const matrixArea = document.getElementById('matrix-selection-area');
         const boardHero = document.getElementById('brand-board-hero');
 
         if (matrixArea) {
             matrixArea.classList.remove('hidden');
-            matrixArea.style.animation = "fadeInScale 0.8s ease-out forwards";
+            matrixArea.style.display = 'block'; // Force display
+            matrixArea.style.opacity = '1';
         }
         if (boardHero) {
             boardHero.classList.remove('hidden');
-            boardHero.style.animation = "fadeInScale 1s ease-out forwards";
+            boardHero.style.display = 'block'; // Force display
+            boardHero.style.opacity = '1';
         }
+
+        if (!data || !data.options || data.options.length === 0) {
+            this.updateStatus("Preparando Boards...", "warn");
+            return;
+        }
+        this.brandOptions = data.options;
 
         // Generate images for all options early
         this.updateStatus("Generando Visuales v7.9...", "warn");
