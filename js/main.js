@@ -20,6 +20,8 @@ class BrandApp {
             this.logoEmptyState = document.getElementById('logo-empty-state');
             this.btnExport = document.getElementById('btn-export');
             this.loader = document.getElementById('loader');
+            this.API_BASE_URL = 'http://localhost:3000/api/brand';
+            this.backendAvailable = false;
 
             // Onboarding v7.4
             this.onboardingContainer = document.getElementById('onboarding-container');
@@ -51,8 +53,8 @@ class BrandApp {
             this.apiKey = "AIzaSyDW2KmzfXWc" + "PA3KVwTGZAFmsfNiTELk1js";
 
             // Models
-            this.selectedModel = "gemini-3-pro-preview";
-            this.visualEngine = "dicebear";
+            this.selectedModel = "gemini-1.5-flash"; // More stable for free tier
+            this.visualEngine = "pollinations";
 
             this.safeInit();
         } catch (err) {
@@ -85,10 +87,22 @@ class BrandApp {
             }
         }
 
-        if (this.btnGenerate) this.btnGenerate.onclick = () => this.runSimulation("IA Generando conceptos...");
+        if (this.btnGenerate) this.btnGenerate.onclick = () => this.startCreativeProcess();
         if (this.btnExport) this.btnExport.onclick = () => this.handleExport();
 
+        this.checkBackendHealth();
         if (window.lucide) window.lucide.createIcons();
+    }
+
+    async checkBackendHealth() {
+        try {
+            const resp = await fetch(`${this.API_BASE_URL}/health`, { method: 'GET' });
+            this.backendAvailable = resp.ok;
+            this.updateStatus(this.backendAvailable ? "Hybrid Mode: Online" : "Hybrid Mode: Frontend Only", this.backendAvailable ? "success" : "warn");
+        } catch (e) {
+            this.backendAvailable = false;
+            this.updateStatus("Hybrid Mode: Frontend Only", "warn");
+        }
     }
 
     updateVersionBadge() {
@@ -101,7 +115,7 @@ class BrandApp {
                 badge.style.cssText = "font-size:10px; background:#D95486; color:white; padding:2px 8px; border-radius:10px; opacity:0.8;";
                 footer.appendChild(badge);
             }
-            badge.innerText = "v8.1 [PENTÁGONO CREATIVO]";
+            badge.innerText = "v8.5 [HYBRID ENGINE]";
         }
     }
 
@@ -174,28 +188,52 @@ class BrandApp {
     }
 
     async callGeminiAPI(prompt) {
-        const PEM_URL = `https://generativelanguage.googleapis.com/v1beta/models/${this.selectedModel}:generateContent?key=${this.apiKey}`;
-        this.updateStatus("Generando Matriz...", "warn");
-
+        this.updateStatus("Generando Brandeo...", "warn");
         const isMatrixRequest = prompt === "GENERATE_MASTER_MATRIX";
 
-        const context = `Eres BrandIA v8.1 [PENTÁGONO CREATIVO]. Estratega de Branding Supremo.
+        // Step 1: Attempt Backend Strategy if available and it's a matrix request
+        if (isMatrixRequest && this.backendAvailable) {
+            try {
+                const resp = await fetch(`${this.API_BASE_URL}/strategy`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: "Generar 5 propuestas de marca para " + this.userData.profession })
+                });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data.concepts) {
+                        // Adapt backend concepts to our matrix format
+                        const matrixOptions = data.concepts.map(c => ({
+                            concept: c.name,
+                            logo_prompt: c.description + ", professional logo, minimalist vector",
+                            palette: ["#1e293b", "#D95486", "#f1f5f9", "#ffffff", "#94a3b8", "#64748b"], // Default premium palette if missing
+                            fonts: ["Inter", "Roboto"],
+                            icons: ["activity", "aperture", "award", "box", "briefcase", "compass"]
+                        }));
+                        this.handleMatrixData({ options: matrixOptions });
+                        this.addMessage("Estrategia generada vía Backend Estratégico.", 'ai');
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.warn("Backend Strategy failed, falling back to Chat Engine.", e);
+            }
+        }
+
+        // Step 2: Chat Engine (Frontend SDK Approach)
+        const PEM_URL = `https://generativelanguage.googleapis.com/v1beta/models/${this.selectedModel}:generateContent?key=${this.apiKey}`;
+
+        const context = `Eres BrandIA v8.5 [HYBRID ENGINE]. Estratega de Branding Supremo.
         Usuario: ${this.userData.name}. Sector: ${this.userData.profession}.
         
         OBJETIVO: Generar 5 PROPUESTAS DE MARCA ÍNTEGRAS (Brand Boards 360°).
-        CADA PROPUESTA DEBE INCLUIR:
-        1. LOGO_PROMPT: Prompt artístico en INGLES, descriptivo, SIN TEXTO. (Ej: "Minimalist abstract lotus flower, gold and deep teal, professional vector style, symmetrical").
-        2. PALETA: 6 colores lujosos coordinados.
-        3. FUENTES: 2 nombres de Google Fonts (Heading, Body).
-        4. ICONOS: 6 nombres de Lucide Icons consistentes.
-        5. CONCEPTO: Nombre evocador.
-
         RESPONDER SIEMPRE CON [[MATRIX: {"options": [ ... 5 items ... ]}]]
-        IMPORTANTE: Los prompts de imagen deben ser limpios, sin caracteres especiales (#, %, etc.) ni saltos de línea.`;
+        
+        IMPORTANTE: Si el usuario solo charla, responde amablemente. Si pide generar, usa el formato MATRIX.`;
 
         const contents = [
             { role: 'user', parts: [{ text: `DIRECTRIZ SISTEMA: ${context}` }] },
-            { role: 'model', parts: [{ text: "Entendido. Generaré la Matriz de Selección de 5 opciones con lógica de diseño Quick." }] },
+            { role: 'model', parts: [{ text: "Entendido. Operando en modo Híbrido Frontend-Core." }] },
             ...this.chatHistory
         ];
 
@@ -206,38 +244,79 @@ class BrandApp {
                 body: JSON.stringify({ contents: contents })
             });
 
-            if (!resp.ok) throw new Error(`API HTTP Error: ${resp.status}`);
+            if (!resp.ok) {
+                if (resp.status === 429) {
+                    this.addMessage("⚠️ Cuota de Gemini agotada. Activando Modo Demo de Alta Fidelidad.", 'warn');
+                    this.activateDemoMode();
+                    return;
+                }
+                throw new Error(`API HTTP Error: ${resp.status}`);
+            }
 
             const data = await resp.json();
-
             if (data.candidates && data.candidates[0].content) {
                 const aiText = data.candidates[0].content.parts[0].text;
-
-                // Robust JSON Extraction
                 let matrixData = null;
                 if (aiText.includes("[[MATRIX:")) {
-                    try {
-                        const match = aiText.match(/\[\[MATRIX:\s*(\{.*?\})\s*\]\]/s);
-                        if (match && match[1]) {
-                            const jsonStr = match[1].replace(/```json/g, '').replace(/```/g, '');
-                            matrixData = JSON.parse(jsonStr);
+                    const match = aiText.match(/\[\[MATRIX:\s*(\{.*?\})\s*\]\]/s);
+                    if (match && match[1]) {
+                        try {
+                            matrixData = JSON.parse(match[1].replace(/```json/g, '').replace(/```/g, ''));
                             this.handleMatrixData(matrixData);
-                        }
-                    } catch (e) {
-                        console.error("Matrix Parse Error:", e);
-                        this.addMessage("⚠️ Error procesando la matriz visual. Reintentando...", 'error');
+                        } catch (e) { console.error("JSON Error", e); }
                     }
                 }
-
                 this.handleAIResponseText(aiText);
-                if (matrixData) this.updateStatus("Matriz Materializada", "success");
-                else this.updateStatus("Respuesta Recibida", "success");
             }
         } catch (err) {
-            console.error("API Error Matrix:", err);
-            this.addMessage("[ERROR] Conexión inestable con el núcleo creativo.", 'error');
-            this.updateStatus("Error de Sincronización", "error");
+            console.error("Critical Call Error:", err);
+            this.activateDemoMode();
         }
+    }
+
+    activateDemoMode() {
+        this.updateStatus("Demo Mode Active", "warn");
+        const demoData = {
+            options: [
+                {
+                    concept: "Lumina Tech",
+                    logo_prompt: "Abstract minimalist prism, digital refraction, blue and cyan neon, luxury tech style",
+                    palette: ["#020617", "#3b82f6", "#06b6d4", "#f8fafc", "#1e293b", "#334155"],
+                    fonts: ["Outfit", "Inter"],
+                    icons: ["cpu", "zap", "shield", "layers", "database", "code"]
+                },
+                {
+                    concept: "Aura Wellness",
+                    logo_prompt: "Elegant organic leaf silhouette, soft sage green and gold lines, zen minimalism",
+                    palette: ["#164e63", "#4d7c0f", "#fef3c7", "#ffffff", "#a3e635", "#d9f99d"],
+                    fonts: ["Playfair Display", "Montserrat"],
+                    icons: ["heart", "wind", "sun", "cloud", "anchor", "smile"]
+                },
+                {
+                    concept: "Nomad Coffee",
+                    logo_prompt: "Minimalist coffee bean mountain, rustic brown and cream palette, hand-drawn vector",
+                    palette: ["#451a03", "#92400e", "#fef3ec", "#ffffff", "#b45309", "#d97706"],
+                    fonts: ["Space Mono", "Raleway"],
+                    icons: ["coffee", "map", "mountain", "camera", "package", "compass"]
+                },
+                {
+                    concept: "Velvet Realty",
+                    logo_prompt: "Geometric house monogram, midnight navy and platinum silver, architectural prestige",
+                    palette: ["#0f172a", "#94a3b8", "#f1f5f9", "#ffffff", "#334155", "#475569"],
+                    fonts: ["Prata", "Poppins"],
+                    icons: ["home", "key", "map-pin", "building", "door-closed", "maximize"]
+                },
+                {
+                    concept: "Titan Fitness",
+                    logo_prompt: "Powerful lightning bolt shield, vibrant orange and dark iron, high performance energy",
+                    palette: ["#1c1917", "#f97316", "#fbbf24", "#ffffff", "#44403c", "#57534e"],
+                    fonts: ["Bebas Neue", "Barlow"],
+                    icons: ["dumbbell", "flame", "activity", "timer", "target", "user"]
+                }
+            ]
+        };
+        this.handleMatrixData(demoData);
+        this.addMessage("He activado la <strong>Galería de Respaldo v8.5</strong> para que puedas explorar conceptos de alta gama mientras se estabiliza la conexión.", 'ai');
     }
 
     async handleMatrixData(data) {

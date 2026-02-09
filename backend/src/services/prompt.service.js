@@ -1,49 +1,42 @@
-/**
- * Servicio de Ingeniería de Prompts (Prompt Engineering)
- * En la versión 10 del BrandIA Engine, este servicio transforma la dirección de arte
- * en instrucciones textuales detalladas para generadores de imágenes (DALL-E, Midjourney, etc.)
- */
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 /**
- * Genera prompts de imagen basados en la dirección de arte
- * @param {Object} artDirection - El objeto de dirección de arte generado en v9
- * @returns {Promise<Object>} - El JSON con los prompts visuales
+ * Servicio de Ingeniería de Prompts usando Gemini 3.0
+ * Genera prompts optimizados para Imagen 3 / Imagen 4.
  */
 const generateVisualPrompts = async (artDirection) => {
-    // Simulamos procesamiento de ingeniería de prompts
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (!process.env.GEMINI_API_KEY) {
+        throw new Error('CONFIG_ERROR: API Key de Gemini faltante.');
+    }
 
-    const { conceptId, styleKeywords = [], logoDescription, colorSystem, typography, iconography, imageryMood } = artDirection;
+    try {
+        const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
-    const keywords = styleKeywords.join(', ');
-    const colors = `${colorSystem.primary}, ${colorSystem.secondary} and ${colorSystem.accent}`;
-    const fontStyle = typography.primaryFont;
+        const systemPrompt = `Eres un experto en Prompt Engineering para modelos de generación de imágenes generativas (Imagen 3, DALL-E 3).
+        Recibirás una Dirección de Arte. Tu tarea es generar prompts técnicos y detallados.
+        
+        Devuelve EXCLUSIVAMENTE un objeto JSON:
+        {
+          "conceptId": "ID_RECIBIDO",
+          "logoPrompt": "Prompt maestro para el logo.",
+          "iconSetPrompt": "Prompt para un set de 6 iconos funcionales.",
+          "styleGuidePrompt": "Prompt para un board de identidad visual."
+        }`;
 
-    // Prompt para Logo Principal
-    const logoPrompt = `High-end professional logo design for a brand, following the concept: ${logoDescription}. ` +
-        `Visual style: ${keywords}. Technical specs: Flat vector, minimalist execution, balanced proportions. ` +
-        `Color palette: ${colors}. Typography inspiration: ${fontStyle}. ` +
-        `Pure white background, high-resolution, sharp edges, no shadows, no realistic textures.`;
+        const fullPrompt = `${systemPrompt}\n\nDirección de Arte: ${JSON.stringify(artDirection)}`;
 
-    // Prompt para Set de Iconos
-    const iconSetPrompt = `A cohesive set of 6 professional functional icons for a digital brand interface. ` +
-        `Style: ${iconography.style}, with ${iconography.stroke} stroke and ${iconography.cornerRadius} corner radius. ` +
-        `Grid system: ${iconography.grid}. Visual consistency: ${keywords}. ` +
-        `Colors used: ${colorSystem.primary} and ${colorSystem.secondary}. ` +
-        `Arranged in a grid, isolated on a white background, consistent viewing angle, 2D vector style.`;
+        const result = await model.generateContent(fullPrompt);
+        const response = await result.response;
+        const text = response.text();
 
-    // Prompt para Lámina de Estilo / Style Guide
-    const styleGuidePrompt = `Professional brand style guide presentation board. ` +
-        `Including: Primary logo, color swatches of ${colors}, typography samples of ${fontStyle}, and texture/mood inspiration. ` +
-        `Overall mood: ${imageryMood}. Layout: Clean, editorial design, organized sections. ` +
-        `High quality graphic design portfolio style, soft studio lighting, showcasing the brand visual identity system.`;
-
-    return {
-        conceptId,
-        logoPrompt,
-        iconSetPrompt,
-        styleGuidePrompt
-    };
+        const jsonString = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        return JSON.parse(jsonString);
+    } catch (error) {
+        console.error('[PromptService] Error en Gemini 3.0:', error.message);
+        throw new Error(`Error en la generación de prompts: ${error.message}`);
+    }
 };
 
 module.exports = {

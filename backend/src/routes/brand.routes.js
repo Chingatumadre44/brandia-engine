@@ -5,11 +5,25 @@ const artController = require('../controllers/art.controller');
 const promptController = require('../controllers/prompt.controller');
 const imageController = require('../controllers/image.controller');
 
+const debugController = require('../controllers/debug.controller');
+
+/**
+ * @route   GET /api/brand/health
+ * @desc    Check service availability
+ */
+router.get('/health', (req, res) => res.json({ status: 'ok', engine: 'v8.5-hybrid' }));
+
 /**
  * @route   POST /api/brand/strategy
  * @desc    Procesa un prompt y devuelve 5 conceptos de branding sugeridos
  */
 router.post('/strategy', brandController.generateStrategy);
+
+/**
+ * @route   GET /api/brand/images/debug
+ * @desc    Test de integración en vivo para Gemini Imagen
+ */
+router.get('/images/debug', debugController.debugIntegration);
 
 /**
  * @route   POST /api/brand/art-direction

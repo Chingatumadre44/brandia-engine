@@ -1,6 +1,9 @@
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
 /**
- * Servicio simulado de IA para generación de branding
- * En etapas posteriores, esto conectará con el API de Gemini o OpenAI
+ * Servicio de IA para generación de branding usando Gemini 3.0
  */
 
 /**
@@ -9,52 +12,47 @@
  * @returns {Promise<Array>} - Un array con 5 objetos de concepto
  */
 const generateBrandingConcepts = async (userPrompt) => {
-    // Simulamos un retraso de procesamiento de IA (1.5 segundos)
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    if (!process.env.GEMINI_API_KEY) {
+        throw new Error('CONFIG_ERROR: API Key de Gemini faltante.');
+    }
 
-    // Datos simulados (Mock)
-    return [
+    try {
+        // Usamos Gemini 3.0 Pro (Preview) para la mejor calidad conceptual
+        const model = genAI.getGenerativeModel({ model: "gemini-3-pro-preview" });
+
+        const systemPrompt = `Actúa como un experto en Branding y Estrategia de Marca.
+        Tu tarea es generar 5 conceptos de marca únicos basados en la descripción del usuario.
+        Cada concepto debe ser creativo, profesional y coherente.
+        
+        Devuelve EXCLUSIVAMENTE un objeto JSON con la siguiente estructura (sin markdown, sin texto adicional):
         {
-            id: "CONCEPT_01",
-            name: "Esencia Minimalista",
-            description: "Una propuesta basada en la limpieza visual y la simplicidad estructural, ideal para marcas que buscan transparencia y modernidad.",
-            personality: ["Sofisticado", "Analítico", "Directo"],
-            targetAudience: "Nativos digitales que valoran el minimalismo y la eficiencia.",
-            tone: "Corporativo pero accesible"
-        },
-        {
-            id: "CONCEPT_02",
-            name: "Eco-Vibrante",
-            description: "Enfoque centrado en la sostenibilidad con una paleta de colores orgánica pero energética.",
-            personality: ["Empático", "Activista", "Alegre"],
-            targetAudience: "Consumidores conscientes del medio ambiente y jóvenes emprendedores.",
-            tone: "Inspirador y natural"
-        },
-        {
-            id: "CONCEPT_03",
-            name: "Neo-Futurismo",
-            description: "Concepto disruptivo que utiliza elementos tecnológicos y contrastes altos para destacar en mercados saturados.",
-            personality: ["Audaz", "Innovador", "Frío"],
-            targetAudience: "Early adopters de tecnología y sector gaming o cripto.",
-            tone: "Vanguardista y técnico"
-        },
-        {
-            id: "CONCEPT_04",
-            name: "Legado Atemporal",
-            description: "Rescate de valores tradicionales con una ejecución moderna. Tipografías serif y colores sobrios.",
-            personality: ["Sabio", "Confiable", "Elegante"],
-            targetAudience: "Sector lujo, consultoría senior o marcas con historia.",
-            tone: "Autoritario y distinguido"
-        },
-        {
-            id: "CONCEPT_05",
-            name: "Cercanía Urbana",
-            description: "Diseño dinámico inspirado en la vida de ciudad, con texturas y tipografías 'bold'.",
-            personality: ["Social", "Rápido", "Inclusivo"],
-            targetAudience: "Comunidad urbana local y marcas de retail masivo.",
-            tone: "Coloquial y enérgico"
-        }
-    ];
+          "concepts": [
+            {
+              "id": "CONCEPT_01",
+              "name": "Nombre del Concepto",
+              "description": "Explicación detallada de la propuesta estratégica.",
+              "personality": ["Atributo1", "Atributo2", "Atributo3"],
+              "targetAudience": "Descripción del público objetivo.",
+              "tone": "Tono de comunicación (ej: Sofisticado, Cercano, etc.)"
+            }
+          ]
+        }`;
+
+        const fullPrompt = `${systemPrompt}\n\nDescripción del usuario: "${userPrompt}"`;
+
+        const result = await model.generateContent(fullPrompt);
+        const response = await result.response;
+        const text = response.text();
+
+        // Limpiamos posible markdown si la IA lo incluyó
+        const jsonString = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        const data = JSON.parse(jsonString);
+
+        return data.concepts;
+    } catch (error) {
+        console.error('[AIService] Error en Gemini 3.0:', error.message);
+        throw new Error(`Error en la generación estratégica: ${error.message}`);
+    }
 };
 
 module.exports = {
