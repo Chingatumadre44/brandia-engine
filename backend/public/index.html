@@ -4,89 +4,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BrandIA Engine | Dashboard de Identidad</title>
+    <title>BrandIA Engine v7.9 [MULTI-BOARD PRO]</title>
+    <!-- Last Build: 2026-02-03 10:40 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Outfit:wght@300;400;600;800&family=Playfair+Display:wght@700&family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="style.css?v=7.0">
+
+    <!-- Emergency Bypass Script -->
+    <script>
+        window.bypassLogin = function () {
+            console.log("EJECUTANDO BYPASS DE EMERGENCIA...");
+            const ob = document.getElementById('onboarding');
+            const app = document.getElementById('app-main');
+            if (ob) ob.style.display = 'none';
+            if (app) {
+                app.classList.remove('blur-content');
+                app.style.filter = 'none';
+                app.style.pointerEvents = 'auto';
+            }
+        };
+    </script>
 </head>
 
 <body>
-    <div class="app-container">
-        <header class="header">
-            <div class="logo">
-                <span class="sparkle">✨</span>
-                <h1>BrandIA <span class="version">v12.1</span></h1>
+    <!-- Capa de Onboarding (Resistant Flow) -->
+    <div id="onboarding" class="onboarding-overlay">
+        <div class="onboarding-bg-glow"></div>
+        <div class="onboarding-card">
+            <div class="onboarding-header">
+                <div class="brand-presence">
+                    <i data-lucide="sparkles" class="brand-sparkle pulse"></i>
+                    <span class="logo-text">BrandIA v7.0 [Elite]</span>
+                </div>
+                <h2>Bienvenido de nuevo</h2>
+                <p>Configura tu identidad profesional para acceder al Dashboard.</p>
             </div>
-            <p class="subtitle">Motor de Inteligencia de Marca & Identidad Visual</p>
-        </header>
-
-        <main class="content">
-            <section class="input-section">
-                <div class="card card-input">
-                    <label for="brand-idea">Define tu visión de marca</label>
-                    <p class="label-desc">Describe qué haces, para quién y qué quieres transmitir.</p>
-                    <textarea id="brand-idea"
-                        placeholder="Ej: Dra. Ana Teniente, endocrinóloga buscando transmitir cercanía y calidez a pacientes con diabetes tipo 1..."></textarea>
-                    <button id="btn-generate" class="btn-primary">
-                        <span class="btn-text">Generar Estrategia de Branding</span>
-                        <span class="loader hidden"></span>
-                    </button>
+            <div class="onboarding-form">
+                <div class="input-group-premium">
+                    <label>NOMBRE COMPLETO</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="user" class="input-icon"></i>
+                        <input type="text" id="ob-user-name" placeholder="Ej: Dra. Ana Teniente" autocomplete="off">
+                    </div>
                 </div>
-            </section>
-
-            <section id="results-section" class="results-section hidden">
-                <div class="section-header">
-                    <h2>1. Propuestas de Identidad</h2>
-                    <p>He generado 5 conceptos estratégicos. Elige uno para profundizar en su estilo visual.</p>
+                <div class="input-group-premium">
+                    <label>TU SECTOR O NEGOCIO</label>
+                    <div class="input-wrapper">
+                        <i data-lucide="briefcase" class="input-icon"></i>
+                        <input type="text" id="ob-user-prof" placeholder="Ej: Medicina, Diseño, Legal..."
+                            autocomplete="off">
+                    </div>
                 </div>
-                <div id="concepts-grid" class="concepts-grid">
-                    <!-- Concept cards inserted here -->
-                </div>
-            </section>
-
-            <section id="art-direction-section" class="results-section hidden">
-                <div class="section-header">
-                    <span class="badge">Nuevo</span>
-                    <h2>2. Dirección de Arte</h2>
-                    <p>Estas son las reglas visuales para el concepto seleccionado.</p>
-                </div>
-                <div id="art-direction-content" class="art-direction-container">
-                    <!-- Art direction content injected here -->
-                </div>
-            </section>
-
-            <section id="prompts-section" class="results-section hidden">
-                <div class="section-header">
-                    <span class="badge">Nuevo v14</span>
-                    <h2>3. Prompts Visuales</h2>
-                    <p>Instrucciones técnicas generadas para motores de IA de imagen.</p>
-                </div>
-                <div id="prompts-content" class="prompts-container">
-                    <!-- Prompts injected here -->
-                </div>
-            </section>
-
-            <section id="assets-section" class="results-section hidden">
-                <div class="section-header">
-                    <span class="badge">Brand Hub v15</span>
-                    <h2>4. Identidad Visual Final</h2>
-                    <p>Activos generados mediante Gemini Imagen 3.</p>
-                </div>
-                <div id="assets-content" class="assets-container">
-                    <!-- Images injected here -->
-                </div>
-            </section>
-        </main>
-
-        <footer class="footer">
-            <p>&copy; 2026 BrandIA Engine. Todos los activos se generan mediante Gemini Imagen 3.</p>
-        </footer>
+                <button id="btn-start" class="btn-primary-mega">
+                    <span>OMITIR Y ACCEDER AL DASHBOARD</span>
+                    <i data-lucide="zap"></i>
+                </button>
+                <p style="margin-top:20px; font-size:0.8rem; color:#94a3b8; cursor:pointer;" onclick="bypassLogin()">
+                    ¿Problemas? Haz clic aquí para entrar directamente.
+                </p>
+            </div>
+        </div>
     </div>
 
-    <script src="main.js"></script>
+    <!-- Main App Container -->
+    <div class="app-container blur-content" id="app-main">
+        <aside class="sidebar">
+            <div class="brand-logo">
+                <i data-lucide="sparkles" class="logo-icon-svg"></i>
+                <span class="logo-text">BrandIA</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                <a href="#builder" class="nav-item"><i data-lucide="palette"></i> Generador</a>
+                <a href="#assets" class="nav-item"><i data-lucide="folder-open"></i> Activos</a>
+                <a href="#" class="nav-item">
+                    <i data-lucide="help-circle"></i>
+                    <span>Soporte</span>
+                </a>
+            </nav>
+            <div id="sidebar-footer" class="sidebar-footer">
+                <!-- Injected v7.0 Badge -->
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-container">
+                    <i data-lucide="search"></i>
+                    <input type="text" placeholder="Buscar en mis activos...">
+                </div>
+                <div class="top-actions">
+                    <button class="btn-primary" id="btn-new-brand">
+                        <i data-lucide="zap"></i> Generar Nuevo
+                    </button>
+                    <div class="notification-bell"><i data-lucide="bell"></i></div>
+                </div>
+            </header>
+
+            <section class="workspace-v77">
+                <!-- Dual Column Layout for Controls (Upper Rank) -->
+                <div class="grid-v76 mb-8 mt-6">
+                    <!-- Column 1: Discovery & Chat (PROMINENT) -->
+                    <div class="col-chat lg:col-span-8 col-span-12">
+                        <div class="card chat-card-elite shadow-2xl">
+                            <div class="card-header-elite">
+                                <h3 class="flex items-center gap-2 font-bold text-slate-700">
+                                    <i data-lucide="sparkles" class="text-pink-500"></i> Diseñador de Identidad v7.8
+                                </h3>
+                                <p class="text-xs text-slate-400 font-medium tracking-tight">Define tu visión antes de
+                                    generar la matriz profesional.</p>
+                            </div>
+                            <div class="chat-container-elite" id="chat-messages">
+                                <div class="message ai">
+                                    ¡Hola! Soy tu director creativo v7.8. He refinado mi motor para crear **marcas de
+                                    nivel agencia**.
+                                    <br><br>
+                                    Háblame de tu visión, los valores que quieres transmitir y el estilo que buscas. Una
+                                    vez que estemos alineados, generaré **5 propuestas completas** (Logo, Colores,
+                                    Fuentes e Iconos).
+                                </div>
+                            </div>
+
+                            <div class="chat-input-area-elite p-6 bg-white border-t">
+                                <div class="flex flex-col gap-4">
+                                    <textarea id="chat-input"
+                                        placeholder="Escribe aquí tu visión de marca con lujo de detalle..."
+                                        class="w-full text-lg p-5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-pink-500 transition-all outline-none"
+                                        rows="4"></textarea>
+                                    <div class="flex justify-between items-center">
+                                        <div id="onboarding-status"
+                                            class="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
+                                            IA A la espera de instrucciones
+                                        </div>
+                                        <button id="send-msg"
+                                            class="bg-[#D95486] hover:bg-[#B83D6B] text-white px-8 py-3 rounded-full font-bold flex items-center gap-3 shadow-lg transform hover:scale-105 transition-all">
+                                            <span>ENVIAR VISIÓN</span>
+                                            <i data-lucide="arrow-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Selection Matrix (Hidden Initially) -->
+                    <div class="col-matrix lg:col-span-12 col-span-12 hidden" id="matrix-selection-area">
+                        <div class="matrix-card-elite p-6 bg-white rounded-3xl shadow-xl">
+                            <div class="flex items-center justify-between mb-6">
+                                <h2 class="text-2xl font-bold text-slate-800 flex items-center">
+                                    <i data-lucide="layers" class="mr-3 text-[#1CB99C]"></i> Propuestas de Diseño
+                                </h2>
+                                <span class="bg-[#95E6D5] text-[#002A32] text-xs font-bold px-4 py-2 rounded-full">
+                                    5 IDENTIDADES COMPLETAS
+                                </span>
+                            </div>
+                            <div id="matrix-options" class="matrix-container-grid">
+                                <!-- injected here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Section: Brand Board (Hidden Initially) -->
+                <div class="hero-brand-section hidden" id="brand-board-hero">
+                    <div class="brand-board shadow-2xl border border-white" id="brand-board">
+                        <div class="board-header">
+                            <div class="header-left">
+                                <h2 class="text-2xl font-black italic tracking-tighter"><i data-lucide="component"></i>
+                                    BRAND BOARD</h2>
+                                <p class="text-slate-500">Galería de Identidad Pro [MULTI-BOARD v8.0]</p>
+                            </div>
+                            <div class="flex gap-4">
+                                <button class="btn-secondary" id="btn-export">
+                                    <i data-lucide="download"></i> Descargar Brand Assets
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="board-grid">
+                            <!-- Logo Section with Upload Ability -->
+                            <div class="board-card logo-section">
+                                <div class="card-label">Logotipo Maestro</div>
+                                <div class="logo-display">
+                                    <div class="logo-box current">
+                                        <span class="label">LOGO BASE / REFERENCIA</span>
+                                        <div class="logo-display-inner" id="drop-zone">
+                                            <img id="logo-actual-display" src="" alt=""
+                                                class="hidden w-full h-full object-contain">
+                                            <div id="logo-empty-state" class="empty-logo-msg text-center p-4">
+                                                <i data-lucide="upload-cloud" class="mx-auto mb-2 text-slate-300"></i>
+                                                <p class="text-[10px] text-slate-400">Clic para subir logo actual si
+                                                    tienes uno</p>
+                                                <input type="file" id="file-input" hidden accept="image/*">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="logo-box generated-v79" id="logo-gen-container">
+                                        <span class="label">IA VISUAL ENGINE [IMAGE PROMPT]</span>
+                                        <div class="gen-status-overlay hidden" id="gen-status-overlay">
+                                            <div class="mini-spinner"></div>
+                                        </div>
+                                        <div id="generated-logo" class="generated-logo-v79 hidden">
+                                            <!-- Img will be injected here -->
+                                        </div>
+                                        <div class="placeholder" id="logo-placeholder">Esperando revelación...</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Colors & Fonts -->
+                            <div class="board-card color-section">
+                                <div class="card-label">Paleta Cromática</div>
+                                <div class="color-palette" id="color-palette">
+                                    <div class="color-swatch-empty"></div>
+                                    <div class="color-swatch-empty"></div>
+                                    <div class="color-swatch-empty"></div>
+                                    <div class="color-swatch-empty"></div>
+                                </div>
+                            </div>
+
+                            <div class="board-card font-section">
+                                <div class="card-label">Sistemas Tipográficos</div>
+                                <div class="font-preview">
+                                    <h4 id="font-heading-name" class="text-xs uppercase tracking-widest text-[#D95486]">
+                                        Inter / Montserrat</h4>
+                                    <div id="font-specimen" class="text-4xl font-bold mt-4 tracking-tight">BRAND
+                                        IDENTITY</div>
+                                    <p id="font-preview-text" class="text-sm text-slate-400 mt-2 font-medium">La voz
+                                        visual de tu marca articulada por IA.</p>
+                                </div>
+                            </div>
+
+                            <div class="board-card icon-section">
+                                <div class="card-label">Sistemas Icónicos</div>
+                                <div id="icon-grid" class="icon-grid-elite">
+                                    <!-- Icons injected here -->
+                                    <div class="icon-swatch-empty"></div>
+                                    <div class="icon-swatch-empty"></div>
+                                    <div class="icon-swatch-empty"></div>
+                                    <div class="icon-swatch-empty"></div>
+                                    <div class="icon-swatch-empty"></div>
+                                    <div class="icon-swatch-empty"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End workspace-v77 -->
+            </section>
+        </main>
+    </div>
+
+    <!-- Loader General -->
+    <div id="loader" class="loader-overlay hidden">
+        <div class="loader-content">
+            <div class="spin-icon"><i data-lucide="loader-2"></i></div>
+            <p id="loader-text">Sincronizando...</p>
+        </div>
+    </div>
+
+    <!-- Script Versionado para romper Caché -->
+    <!-- Elite Viewer Modal -->
+    <div id="elite-viewer" class="elite-viewer-modal">
+        <div class="viewer-content">
+            <button class="viewer-close" onclick="app.closeEliteViewer()">
+                <i data-lucide="x"></i>
+            </button>
+            <div id="viewer-logo-container" class="w-full flex justify-center p-8 bg-white rounded-xl shadow-inner">
+                <!-- Large Logo SVG/Img will be here -->
+            </div>
+            <div class="viewer-info">
+                <h3 id="viewer-brand-name" class="text-2xl font-bold text-slate-800 mb-2"></h3>
+                <p id="viewer-brand-tagline" class="text-slate-500"></p>
+                <div class="flex gap-4 mt-6">
+                    <button onclick="app.generateBrandPDF()"
+                        class="bg-[#D95486] text-white px-6 py-3 rounded-full font-bold shadow-lg hover:scale-105 transition-all">
+                        <i data-lucide="download" class="inline-block mr-2"></i> Exportar Brand Book (PDF)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js?v=8.5"></script>
 </body>
 
 </html>
